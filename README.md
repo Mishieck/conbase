@@ -41,3 +41,10 @@ conbase.from(table).update.many(...records);
 conbase.on(table).create.index();
 ```
 
+## Table Files
+
+- **schema.conbase.ts** or **schema.conbase.json**: The schema of the table.
+- **init.conbase.ts** or **init.conbase.json** or **init.conbase.csv**: The initial data. The table will be populated by this data upon creation.
+- **table.conbase.ts**: The ES module containing the table.
+- **table.conbase.csv**: The database table with all the records.
+- **map.conbase.ts**: Contains a function that converts data
