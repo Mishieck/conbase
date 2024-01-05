@@ -1,0 +1,33 @@
+{
+  "name": "@mishieck/conbase",
+  "module": "index.ts",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "description": "",
+  "scripts": {
+    "build": "bun run build.mjs",
+    "prepublishOnly": "bun run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "bun"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Mishieck/conbase#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mishieck/conbase.git"
+  },
+  "bugs": "https://github.com/Mishieck/conbase/issues",
+  "author": "Mishieck <mishiecmwale@gmail.com>",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
