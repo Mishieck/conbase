@@ -24,7 +24,9 @@ export type InsertMany<Rec extends DatabaseRecord> = (
   ...records: Array<Rec>
 ) => DatabaseResult;
 
-export type SelectOne<Rec extends DatabaseRecord> = (id: Rec['id']) => Rec;
+export type SelectOne<Rec extends DatabaseRecord> = (
+  id: Rec['id']
+) => DatabaseResult<Rec>;
 
 export type SelectMany<Rec extends DatabaseRecord> = (
   ...ids: Array<Rec['id']>
@@ -74,12 +76,8 @@ export type Index<Key extends string = string> = Record<Key, number>;
 
 export type Collection<Rec extends DatabaseRecord> = {
   name: string;
+  useProxy?: boolean;
   fields: Index;
   records: Array<Array<unknown>>;
   index: Nullable<Index>;
-};
-
-export type RecordProxy<Rec extends DatabaseRecord> = {
-  fields: Index;
-  record: Array<unknown>;
 };
