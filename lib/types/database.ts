@@ -30,7 +30,7 @@ export type SelectOne<Rec extends DatabaseRecord> = (
 
 export type SelectMany<Rec extends DatabaseRecord> = (
   ...ids: Array<Rec['id']>
-) => Array<Rec>;
+) => DatabaseResult<Array<Rec>>;
 
 export type SelectAll<Rec extends DatabaseRecord> = () => Array<Rec>;
 
