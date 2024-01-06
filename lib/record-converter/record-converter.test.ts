@@ -1,24 +1,39 @@
 import { describe, it, expect } from 'bun:test';
 import { convertRecordToArray } from './record-converter';
-import { createFields } from '../fields/fields';
+import type { Index } from '../types/database';
+
+type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  age: number;
+};
+
+const userRecord: User = {
+  id: '1',
+  firstName: 'First',
+  lastName: 'Last',
+  age: 23
+};
+
+const userFields: Index<keyof User> = {
+  id: 0,
+  firstName: 1,
+  lastName: 2,
+  age: 3
+};
+
+const userArray: Array<User[keyof User]> = [
+  userRecord.id,
+  userRecord.firstName,
+  userRecord.lastName,
+  userRecord.age
+];
 
 describe('convertRecordToArray', () => {
-  const record = {
-    id: '1',
-    firstName: 'First',
-    lastName: 'Last',
-    age: 23
-  };
-
-  const fields = createFields(record);
-
-  const expectedArray = [
-    record.id,
-    record.firstName,
-    record.lastName,
-    record.age
-  ];
-
+  const record: User = { ...userRecord };
+  const fields = { ...userFields };
+  const expectedArray = [...userArray];
   const convert = convertRecordToArray(fields);
 
   it('should convert record to an array', () => {
@@ -27,7 +42,7 @@ describe('convertRecordToArray', () => {
   });
 
   it('should replace missing values with null', () => {
-    const incompleteRecord = { ...record } as Pick<typeof record, 'id'> &
+    const incompleteRecord = { ...record } as Pick<User, 'id'> &
       Partial<typeof record>;
 
     const missingKey: keyof typeof record = 'lastName';
