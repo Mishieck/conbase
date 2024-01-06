@@ -1,5 +1,5 @@
 import { DatabaseError } from '../error/error';
-import { convertRecordToArray } from '../record-to-array/record-to-array';
+import { convertRecordToArray } from '../record-converter/record-converter';
 import type { Collection, DatabaseRecord, InsertOne } from '../types/database';
 
 export const insertOne =
