@@ -32,7 +32,9 @@ export type SelectMany<Rec extends DatabaseRecord> = (
   ...ids: Array<Rec['id']>
 ) => DatabaseResult<Array<Rec>>;
 
-export type SelectAll<Rec extends DatabaseRecord> = () => Array<Rec>;
+export type SelectAll<Rec extends DatabaseRecord> = () => DatabaseResult<
+  Array<Rec>
+>;
 
 export type UpdateOne<Rec extends DatabaseRecord> = (
   record: UpdateRecord<Rec>
