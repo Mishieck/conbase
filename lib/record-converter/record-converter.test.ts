@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'bun:test';
-import { convertRecordToArray } from './record-converter';
+import {
+  convertArrayToRecord,
+  convertArrayToRecordProxy,
+  convertRecordToArray
+} from './record-converter';
 import type { Index } from '../types/database';
 
 type User = {
@@ -54,5 +58,31 @@ describe('convertRecordToArray', () => {
 
     const array = convert(incompleteRecord) as typeof incompleteArray;
     expect(array).toEqual(incompleteArray);
+  });
+});
+
+describe('convertArrayToRecord', () => {
+  const convert = convertArrayToRecord<User>(userFields);
+
+  it('should convert array to record', () => {
+    const array = [...userArray];
+    const expectedRecord: User = { ...userRecord };
+    const record = convert(array);
+    expect(record).toEqual(expectedRecord);
+  });
+});
+
+describe('convertArrayToRecordProxy', () => {
+  const convert = convertArrayToRecordProxy<User>(userFields);
+
+  it('should convert array to record proxy', () => {
+    const array = [...userArray];
+    const expectedRecord: User = { ...userRecord };
+    const record = convert(array);
+
+    for (const key in userFields)
+      expect(record[key as keyof User]).toEqual(
+        expectedRecord[key as keyof User]
+      );
   });
 });
