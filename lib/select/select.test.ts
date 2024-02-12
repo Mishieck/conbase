@@ -3,6 +3,7 @@ import type { Collection, Index } from '../types/database';
 import { selectOne } from './one';
 import { selectMany } from './many';
 import { selectAll } from './all';
+import { Selector } from './select';
 
 type User = { id: string; name: string };
 
@@ -72,5 +73,21 @@ describe('selectAll', () => {
         );
       }
     });
+  });
+});
+
+describe('Selector', () => {
+  it('should select records using various methods', () => {
+    const records = [createUser(), { ...createUser(), id: '2' }];
+
+    const collection = {
+      ...createCollection(),
+      records: records.map(createArray)
+    };
+
+    const select = Selector(collection);
+    expect(select.one('1').data).toMatchObject({ id: '1' });
+    expect(select.many('1', '2').data).toHaveLength(2);
+    expect(select.all().data).toHaveLength(2);
   });
 });
