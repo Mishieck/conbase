@@ -3,6 +3,7 @@ import type { TableData, Index } from '../types/database';
 import { updateOne } from './one';
 import { updateMany } from './many';
 import { Updater } from './update';
+import { updateAll } from './all';
 
 type User = { id: string; name: string };
 
@@ -90,6 +91,56 @@ describe('updateMany', () => {
     expect(error).toMatchObject({ cause: 'NOT-EXISTS' });
     expect(tableData.records[0]).toContain(createName(updatedName)('1'));
     expect(tableData.records[1]).toContain(createName(initialName)('2'));
+  });
+});
+
+describe('updateAll', () => {
+  const createName = (firstName: string) => (secondName: string) =>
+    `${firstName}${secondName}`;
+
+  it('should update all records', () => {
+    const tableData = createTableData();
+    const initialName = 'Updater';
+    const updatedName = `${initialName} Updated`;
+
+    tableData.records.push(
+      ['1', createName(initialName)('1')],
+      ['2', createName(initialName)('2')]
+    );
+
+    expect(tableData.records[0]).toContain(createName(initialName)('1'));
+    expect(tableData.records[1]).toContain(createName(initialName)('2'));
+
+    updateAll(tableData)(record => ({
+      ...record,
+      name: createName(updatedName)(record.id)
+    }));
+
+    expect(tableData.records[0]).toContain(createName(updatedName)('1'));
+    expect(tableData.records[1]).toContain(createName(updatedName)('2'));
+  });
+
+  it('should error if any of the records does not exist', () => {
+    const tableData = createTableData();
+    const initialName = 'Updater';
+    const updatedName = `${initialName} Updated`;
+
+    tableData.records.push(
+      ['1', createName(initialName)('1')],
+      ['2', createName(initialName)('2')]
+    );
+
+    expect(tableData.records[0]).toContain(createName(initialName)('1'));
+    expect(tableData.records[1]).toContain(createName(initialName)('2'));
+
+    const result = updateAll(tableData)(record => ({
+      ...record,
+      name: createName(updatedName)(String(Number(record.id) + 1))
+    }));
+
+    expect(result).toMatchObject({ data: null, error: null });
+    expect(tableData.records[0]).toContain(createName(updatedName)('2'));
+    expect(tableData.records[1]).toContain(createName(updatedName)('3'));
   });
 });
 
