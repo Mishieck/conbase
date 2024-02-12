@@ -1,5 +1,6 @@
 import type { DatabaseRecord } from '../types/database';
 import type {
+  DatabaseEventEmitter,
   DatabaseEvent as Event,
   EventStatusRecord,
   OperationFlagCountRecord,
@@ -44,4 +45,14 @@ export const DatabaseEvent = <Rec extends DatabaseRecord>(
     status: { ...status, isError: !status.isSuccess },
     data
   };
+};
+
+export const databaseEventEmitter: DatabaseEventEmitter = {
+  addObserver: tableData => observe => {
+    tableData.observers.push(observe);
+  },
+  notifyObservers: tableData => (operation, status, data) => {
+    const event = DatabaseEvent(operation, status, data);
+    for (const observe of tableData.observers) observe(event);
+  }
 };
