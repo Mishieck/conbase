@@ -4,6 +4,7 @@ import { insertOne } from './one';
 import { insertMany } from './many';
 import { DatabaseError } from '../error/error';
 import { Inserter } from './insert';
+import { insertAll } from './all';
 
 type User = { id: string; name: string };
 
@@ -59,6 +60,17 @@ describe('insertMany', () => {
   it('should insert multiple records', () => {
     const tableData = createTableData();
     const insert = insertMany(tableData);
+    insert({ ...user }, { ...user, id: '2' });
+
+    expect(tableData.records).toHaveLength(2);
+    expect(tableData.records[0]).toEqual([user.id, user.name]);
+  });
+});
+
+describe('insertAll', () => {
+  it('should insert multiple records', () => {
+    const tableData = createTableData();
+    const insert = insertAll(tableData);
     insert({ ...user }, { ...user, id: '2' });
 
     expect(tableData.records).toHaveLength(2);
