@@ -18,7 +18,8 @@ const createTableData = (): TableData<User> => ({
   name: 'Users',
   fields,
   index: null,
-  records: [[...userArray]]
+  records: [[...userArray]],
+  observers: []
 });
 
 describe('selectOne', () => {

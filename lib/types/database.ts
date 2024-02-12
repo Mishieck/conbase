@@ -1,4 +1,5 @@
 import type { DatabaseError } from '../error/error';
+import type { DatabaseEventObserver } from './events';
 
 export type Nullable<Value> = Value | null;
 export type DatabaseRecord = { id: string };
@@ -25,4 +26,5 @@ export type TableData<Rec extends DatabaseRecord> = {
   fields: Fields<Rec>;
   records: Array<Array<unknown>>;
   index: Index<Rec> | null;
+  observers: Array<DatabaseEventObserver<Rec>>;
 };

@@ -13,7 +13,8 @@ const createTableData = (
   name: 'Users',
   fields: { id: 0, name: 1 },
   records: [],
-  index
+  index,
+  observers: []
 });
 
 describe('removeOne', () => {

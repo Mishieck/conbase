@@ -27,7 +27,8 @@ export const createTableData = <Rec extends DatabaseRecord>(
     name,
     fields: createFields(...fields),
     index: useIndex ? ({} as Index<Rec>) : null,
-    records: []
+    records: [],
+    observers: []
   };
 };
 
