@@ -14,7 +14,8 @@ const createTableData = (
   name: 'Users',
   fields: { id: 0, name: 1 },
   records: [],
-  index
+  index,
+  observers: []
 });
 
 const user: User = { id: '1', name: 'Name' };
