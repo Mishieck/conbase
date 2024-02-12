@@ -3,6 +3,7 @@ import type { Collection, Index } from '../types/database';
 import { insertOne } from './one';
 import { insertMany } from './many';
 import { DatabaseError } from '../error/error';
+import { Inserter } from './insert';
 
 type User = { id: string; name: string };
 
@@ -62,5 +63,21 @@ describe('insertMany', () => {
 
     expect(collection.records).toHaveLength(2);
     expect(collection.records[0]).toEqual([user.id, user.name]);
+  });
+});
+
+describe('Inserter', () => {
+  it('should insert records using various methods', () => {
+    const collection = createCollection();
+    const insert = Inserter(collection);
+
+    insert.one({ ...user });
+    expect(collection.records).toHaveLength(1);
+    expect(collection.records[0]).toContain('1');
+
+    insert.many({ ...user, id: '2' }, { ...user, id: '3' });
+    expect(collection.records).toHaveLength(3);
+    expect(collection.records[1]).toContain('2');
+    expect(collection.records[2]).toContain('3');
   });
 });
