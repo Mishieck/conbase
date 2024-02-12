@@ -76,13 +76,15 @@ export type Delete<Rec extends DatabaseRecord> = {
   all: DeleteAll;
 };
 
-export type Index<Key extends string = string> = Record<Key, number>;
+export type Fields<Rec extends DatabaseRecord> = Record<keyof Rec, number>;
+
+export type Index<Rec extends DatabaseRecord> = Record<Rec['id'], number>;
 
 export type Collection<Rec extends DatabaseRecord> = {
   name: string;
-  fields: Index;
+  fields: Fields<Rec>;
   records: Array<Array<unknown>>;
-  index: Nullable<Index>;
+  index: Index<Rec> | null;
 };
 
 export type CollectionHandler<Rec extends DatabaseRecord> = {
