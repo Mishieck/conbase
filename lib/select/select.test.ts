@@ -13,30 +13,17 @@ const createArray = (record: User) =>
   [record.id, record.name] as Array<User[keyof User]>;
 const userArray = createArray(userRecord);
 
-const createCollection = (useProxy = true): Collection<User> => ({
+const createCollection = (): Collection<User> => ({
   name: 'Users',
   fields,
-  useProxy,
   index: null,
   records: [[...userArray]]
 });
 
 describe('selectOne', () => {
-  it('should select a record using a proxy', () => {
+  it('should select a record', () => {
     const expectedRecord = createUser();
     const collection = createCollection();
-    const { data: record } = selectOne(collection)(userRecord.id);
-
-    for (const key in fields) {
-      expect(record?.[key as keyof User]).toBe(
-        expectedRecord[key as keyof User]
-      );
-    }
-  });
-
-  it('should select a record without using a proxy', () => {
-    const expectedRecord = createUser();
-    const collection = createCollection(false);
     const { data: record } = selectOne(collection)(userRecord.id);
     expect(record).toEqual(expectedRecord);
   });

@@ -78,7 +78,6 @@ export type Index<Key extends string = string> = Record<Key, number>;
 
 export type Collection<Rec extends DatabaseRecord> = {
   name: string;
-  useProxy?: boolean;
   fields: Index;
   records: Array<Array<unknown>>;
   index: Nullable<Index>;

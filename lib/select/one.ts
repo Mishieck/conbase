@@ -1,18 +1,11 @@
 import { DatabaseError } from '../error/error';
-import {
-  convertArrayToRecord,
-  convertArrayToRecordProxy
-} from '../record-converter/record-converter';
+import { convertArrayToRecord } from '../record-converter/record-converter';
 import type { Collection, DatabaseRecord, SelectOne } from '../types/database';
 
 export const selectOne = <Rec extends DatabaseRecord>(
   collection: Collection<Rec>
 ): SelectOne<Rec> => {
-  const convertArray = collection.useProxy
-    ? convertArrayToRecordProxy
-    : convertArrayToRecord;
-
-  const convert = convertArray<Rec>(collection.fields);
+  const convert = convertArrayToRecord<Rec>(collection.fields);
 
   return id => {
     let record = collection.index

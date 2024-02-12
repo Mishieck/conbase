@@ -12,19 +12,3 @@ export const convertArrayToRecord =
       (record, [key, value]) => ({ ...record, [key]: array[value] }),
       {} as Rec
     );
-
-export const convertArrayToRecordProxy =
-  <Rec extends DatabaseRecord>(fields: Index<string>) =>
-  (array: Array<unknown>): Rec => {
-    return new Proxy({} as unknown as Rec, {
-      get: (_target, key) => array[fields[key as string]],
-      set: (_target, key, value) => {
-        array = Object.entries(fields).map(([k, index]) =>
-          k === key ? value : array[index]
-        );
-
-        return true;
-      },
-      has: (_target, key) => key in fields
-    });
-  };
