@@ -1,5 +1,6 @@
 import { DatabaseError } from '../error/error';
-import type { TableData, DatabaseRecord, DeleteOne } from '../types/database';
+import type { TableData, DatabaseRecord } from '../types/database';
+import type { DeleteOne } from '../types/delete';
 
 export const deleteOne = <Rec extends DatabaseRecord>(
   tableData: TableData<Rec>

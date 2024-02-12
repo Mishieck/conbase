@@ -1,5 +1,6 @@
 import { convertArrayToRecord } from '../record-converter/record-converter';
-import type { TableData, DatabaseRecord, SelectAll } from '../types/database';
+import type { TableData, DatabaseRecord } from '../types/database';
+import type { SelectAll } from '../types/select';
 
 export const selectAll = <Rec extends DatabaseRecord>(
   tableData: TableData<Rec>

@@ -16,66 +16,6 @@ export type TableDataUtil<
 export type DatabaseRecordPartial<Rec extends DatabaseRecord> = Partial<Rec> &
   Pick<Rec, 'id'>;
 
-export type InsertOne<Rec extends DatabaseRecord> = (
-  record: Rec
-) => DatabaseResult;
-
-export type InsertMany<Rec extends DatabaseRecord> = (
-  ...records: Array<Rec>
-) => DatabaseResult;
-
-export type SelectOne<Rec extends DatabaseRecord> = (
-  id: Rec['id']
-) => DatabaseResult<Rec>;
-
-export type SelectMany<Rec extends DatabaseRecord> = (
-  ...ids: Array<Rec['id']>
-) => DatabaseResult<Array<Rec>>;
-
-export type SelectAll<Rec extends DatabaseRecord> = () => DatabaseResult<
-  Array<Rec>
->;
-
-export type UpdateOne<Rec extends DatabaseRecord> = (
-  record: DatabaseRecordPartial<Rec>
-) => DatabaseResult<Rec>;
-
-export type UpdateMany<Rec extends DatabaseRecord> = (
-  ...records: Array<DatabaseRecordPartial<Rec>>
-) => DatabaseResult<Array<Rec>>;
-
-export type DeleteOne<Rec extends DatabaseRecord> = (
-  id: Rec['id']
-) => DatabaseResult;
-
-export type DeleteMany<Rec extends DatabaseRecord> = (
-  ...ids: Array<Rec['id']>
-) => DatabaseResult;
-
-export type DeleteAll = () => DatabaseResult;
-
-export type Insert<Rec extends DatabaseRecord> = {
-  one: InsertOne<Rec>;
-  many: InsertMany<Rec>;
-};
-
-export type Select<Rec extends DatabaseRecord> = {
-  one: SelectOne<Rec>;
-  many: SelectMany<Rec>;
-  all: SelectAll<Rec>;
-};
-
-export type Update<Rec extends DatabaseRecord> = {
-  one: UpdateOne<Rec>;
-  many: UpdateMany<Rec>;
-};
-
-export type Delete<Rec extends DatabaseRecord> = {
-  one: DeleteOne<Rec>;
-  many: DeleteMany<Rec>;
-  all: DeleteAll;
-};
-
 export type Fields<Rec extends DatabaseRecord> = Record<keyof Rec, number>;
 
 export type Index<Rec extends DatabaseRecord> = Record<Rec['id'], number>;
@@ -85,11 +25,4 @@ export type TableData<Rec extends DatabaseRecord> = {
   fields: Fields<Rec>;
   records: Array<Array<unknown>>;
   index: Index<Rec> | null;
-};
-
-export type Table<Rec extends DatabaseRecord> = {
-  insert: Insert<Rec>;
-  select: Select<Rec>;
-  update: Update<Rec>;
-  delete: Delete<Rec>;
 };

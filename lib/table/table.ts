@@ -2,12 +2,12 @@ import { Remover } from '../delete/delete';
 import { Inserter } from '../insert/insert';
 import { Selector } from '../select/select';
 import type {
-  Table as TableType,
   DatabaseRecord,
   Fields,
   Index,
   TableData
 } from '../types/database';
+import type { Table as TableType } from '../types/table';
 import { Updater } from '../update/update';
 
 export const createFields = <Rec extends DatabaseRecord>(

@@ -1,4 +1,5 @@
-import type { TableData, DatabaseRecord, InsertMany } from '../types/database';
+import type { TableData, DatabaseRecord } from '../types/database';
+import type { InsertMany } from '../types/insert';
 import { insertOne } from './one';
 
 export const insertMany = <Rec extends DatabaseRecord>(

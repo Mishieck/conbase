@@ -1,4 +1,9 @@
-import type { TableData, DatabaseRecord, UpdateMany } from '../types/database';
+import type {
+  TableData,
+  DatabaseRecord,
+  DatabaseResult
+} from '../types/database';
+import type { UpdateMany } from '../types/update';
 import { updateOne } from './one';
 
 export const updateMany = <Rec extends DatabaseRecord>(
@@ -7,7 +12,7 @@ export const updateMany = <Rec extends DatabaseRecord>(
   const update = updateOne(tableData);
 
   return (...updates) => {
-    const results = updates.map(update);
+    const results = updates.map<DatabaseResult<Rec>>(update);
     const maybeError = results.find(({ error }) => !!error);
 
     return {

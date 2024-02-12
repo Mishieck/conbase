@@ -1,4 +1,5 @@
-import type { TableData, DatabaseRecord, Delete } from '../types/database';
+import type { TableData, DatabaseRecord } from '../types/database';
+import type { Delete } from '../types/delete';
 import { deleteAll } from './all';
 import { deleteMany } from './many';
 import { deleteOne } from './one';

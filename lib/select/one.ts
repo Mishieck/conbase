@@ -1,6 +1,7 @@
 import { DatabaseError } from '../error/error';
 import { convertArrayToRecord } from '../record-converter/record-converter';
-import type { TableData, DatabaseRecord, SelectOne } from '../types/database';
+import type { TableData, DatabaseRecord } from '../types/database';
+import type { SelectOne } from '../types/select';
 
 export const selectOne = <Rec extends DatabaseRecord>(
   tableData: TableData<Rec>

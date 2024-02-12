@@ -1,4 +1,5 @@
-import type { TableData, DatabaseRecord, Select } from '../types/database';
+import type { TableData, DatabaseRecord } from '../types/database';
+import type { Select } from '../types/select';
 import { selectAll } from './all';
 import { selectMany } from './many';
 import { selectOne } from './one';

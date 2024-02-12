@@ -1,4 +1,5 @@
-import type { TableData, DatabaseRecord, Insert } from '../types/database';
+import type { TableData, DatabaseRecord } from '../types/database';
+import type { Insert } from '../types/insert';
 import { insertMany } from './many';
 import { insertOne } from './one';
 

@@ -1,4 +1,5 @@
-import type { TableData, DatabaseRecord, DeleteAll } from '../types/database';
+import type { TableData, DatabaseRecord } from '../types/database';
+import type { DeleteAll } from '../types/delete';
 
 export const deleteAll = <Rec extends DatabaseRecord>(
   tableData: TableData<Rec>

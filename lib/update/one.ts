@@ -1,6 +1,7 @@
 import { DatabaseError } from '../error/error';
 import { convertArrayToRecord } from '../record-converter/record-converter';
-import type { TableData, DatabaseRecord, UpdateOne } from '../types/database';
+import type { TableData, DatabaseRecord } from '../types/database';
+import type { UpdateOne } from '../types/update';
 
 export const updateOne = <Rec extends DatabaseRecord>(
   tableData: TableData<Rec>
@@ -22,7 +23,7 @@ export const updateOne = <Rec extends DatabaseRecord>(
       };
 
     for (const field in update)
-      record[tableData.fields[field]] = update[field as keyof Rec];
+      record[tableData.fields[field as keyof Rec]] = update[field as keyof Rec];
 
     return { data: convertToRecord(record), error: null };
   };
