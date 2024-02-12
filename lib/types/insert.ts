@@ -10,7 +10,7 @@ export type InsertMany<Rec extends DatabaseRecord> = (
 
 export type InsertAll<Rec extends DatabaseRecord> = (
   ...records: Array<Rec>
-) => DatabaseResult;
+) => DatabaseResult<Array<Rec>>;
 
 export type Insert<Rec extends DatabaseRecord> = {
   one: InsertOne<Rec>;

@@ -16,7 +16,7 @@ export type UpdateCallback<Rec extends DatabaseRecord> = (record: Rec) => Rec;
 
 export type UpdateAll<Rec extends DatabaseRecord> = (
   update: UpdateCallback<Rec>
-) => DatabaseResult;
+) => DatabaseResult<Array<Rec>>;
 
 export type Update<Rec extends DatabaseRecord> = {
   one: UpdateOne<Rec>;

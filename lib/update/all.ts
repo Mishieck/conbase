@@ -1,3 +1,4 @@
+import { databaseEventEmitter } from '../events/events';
 import {
   convertArrayToRecord,
   convertRecordToArray
@@ -10,14 +11,27 @@ export const updateAll = <Rec extends DatabaseRecord>(
 ): UpdateAll<Rec> => {
   const convertToRecord = convertArrayToRecord(tableData.fields);
   const convertToArray = convertRecordToArray(tableData.fields);
+  const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
 
   return update => {
     tableData.records = tableData.records.map(record =>
       convertToArray(update(convertToRecord(record)))
     );
 
+    const data = tableData.records.map(convertToRecord);
+
+    notifyObservers(
+      ['update', 'all'],
+      {
+        isFetching: false,
+        isSuccess: true,
+        isEmpty: tableData.records.length === 0
+      },
+      data
+    );
+
     return {
-      data: null,
+      data,
       error: null
     };
   };

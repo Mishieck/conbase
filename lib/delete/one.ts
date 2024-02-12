@@ -1,10 +1,13 @@
 import { DatabaseError } from '../error/error';
+import { databaseEventEmitter } from '../events/events';
 import type { TableData, DatabaseRecord } from '../types/database';
 import type { DeleteOne } from '../types/delete';
 
 export const deleteOne = <Rec extends DatabaseRecord>(
   tableData: TableData<Rec>
 ): DeleteOne<Rec> => {
+  const notifyObservers = databaseEventEmitter.notifyObservers(tableData);
+
   return id => {
     const idIndex = tableData.fields.id;
 
@@ -12,13 +15,24 @@ export const deleteOne = <Rec extends DatabaseRecord>(
       rec => rec[idIndex] === id
     );
 
-    if (indexOfRecord < 0)
-      return {
-        data: null,
-        error: new DatabaseError('NOT-EXISTS', `Couldn't find record ${id}`)
-      };
+    if (indexOfRecord >= 0) tableData.records.splice(indexOfRecord, 1);
 
-    tableData.records.splice(indexOfRecord, 1);
-    return { data: null, error: null };
+    notifyObservers(
+      ['delete', 'one'],
+      {
+        isFetching: false,
+        isSuccess: indexOfRecord >= 0,
+        isEmpty: tableData.records.length === 0
+      },
+      null
+    );
+
+    return {
+      data: null,
+      error:
+        indexOfRecord < 0
+          ? new DatabaseError('NOT-EXISTS', `Couldn't find record ${id}`)
+          : null
+    };
   };
 };

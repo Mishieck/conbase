@@ -139,7 +139,7 @@ describe('updateAll', () => {
       name: createName(updatedName)(String(Number(record.id) + 1))
     }));
 
-    expect(result).toMatchObject({ data: null, error: null });
+    expect(result).toMatchObject({ error: null });
     expect(tableData.records[0]).toContain(createName(updatedName)('2'));
     expect(tableData.records[1]).toContain(createName(updatedName)('3'));
   });
