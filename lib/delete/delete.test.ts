@@ -8,7 +8,7 @@ import { Remover } from './delete';
 type User = { id: string; name: string };
 
 const createCollection = (
-  index: Index<string> | null = null
+  index: Index<User> | null = null
 ): Collection<User> => ({
   name: 'Users',
   fields: { id: 0, name: 1 },

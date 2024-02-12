@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'bun:test';
 import { convertArrayToRecord, convertRecordToArray } from './record-converter';
-import type { Index } from '../types/database';
+import type { Fields } from '../types/database';
 
 type User = {
   id: string;
@@ -16,7 +16,7 @@ const userRecord: User = {
   age: 23
 };
 
-const userFields: Index<keyof User> = {
+const userFields: Fields<User> = {
   id: 0,
   firstName: 1,
   lastName: 2,

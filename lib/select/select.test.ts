@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import type { Collection, Index } from '../types/database';
+import type { Collection, Fields } from '../types/database';
 import { selectOne } from './one';
 import { selectMany } from './many';
 import { selectAll } from './all';
@@ -7,7 +7,7 @@ import { Selector } from './select';
 
 type User = { id: string; name: string };
 
-const fields: Index<keyof User> = { id: 0, name: 1 };
+const fields: Fields<User> = { id: 0, name: 1 };
 const userRecord = { id: '1', name: 'Name' };
 const createUser = (): User => ({ ...userRecord });
 const createArray = (record: User) =>
