@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import type { Collection, Index } from '../types/database';
+import type { TableData, Index } from '../types/database';
 import { insertOne } from './one';
 import { insertMany } from './many';
 import { DatabaseError } from '../error/error';
@@ -7,9 +7,9 @@ import { Inserter } from './insert';
 
 type User = { id: string; name: string };
 
-const createCollection = (
+const createTableData = (
   index: Index<User> | null = null
-): Collection<User> => ({
+): TableData<User> => ({
   name: 'Users',
   fields: { id: 0, name: 1 },
   records: [],
@@ -20,35 +20,35 @@ const user: User = { id: '1', name: 'Name' };
 
 describe('insertOne', () => {
   it('should insert a record', () => {
-    const collection = createCollection();
-    const insert = insertOne(collection);
+    const tableData = createTableData();
+    const insert = insertOne(tableData);
     insert({ ...user });
-    expect(collection.records[0]).toEqual([user.id, user.name]);
+    expect(tableData.records[0]).toEqual([user.id, user.name]);
   });
 
   it('should update index', () => {
-    const collection = createCollection({});
-    const insert = insertOne(collection);
+    const tableData = createTableData({});
+    const insert = insertOne(tableData);
 
     insert({ ...user });
     insert({ ...user, id: '2' });
 
-    expect(collection.records).toHaveLength(2);
-    expect(collection.index).toEqual({ '1': 0, '2': 1 });
+    expect(tableData.records).toHaveLength(2);
+    expect(tableData.index).toEqual({ '1': 0, '2': 1 });
   });
 
   it('should not allow duplicate records', () => {
-    const collection = createCollection();
-    const indexedCollection = createCollection({});
-    const insert = insertOne(collection);
-    const insertIndexed = insertOne(indexedCollection);
+    const tableData = createTableData();
+    const indexedTableData = createTableData({});
+    const insert = insertOne(tableData);
+    const insertIndexed = insertOne(indexedTableData);
 
     insert({ ...user });
     insertIndexed({ ...user });
     const { error } = insert({ ...user });
     const { error: errorIndexed } = insertIndexed({ ...user });
 
-    expect(collection.records).toHaveLength(1);
+    expect(tableData.records).toHaveLength(1);
     expect(error).toBeInstanceOf(DatabaseError);
     expect(errorIndexed).toBeInstanceOf(DatabaseError);
     expect(error).toMatchObject({ cause: 'EXISTS' });
@@ -57,27 +57,27 @@ describe('insertOne', () => {
 
 describe('insertMany', () => {
   it('should insert multiple records', () => {
-    const collection = createCollection();
-    const insert = insertMany(collection);
+    const tableData = createTableData();
+    const insert = insertMany(tableData);
     insert({ ...user }, { ...user, id: '2' });
 
-    expect(collection.records).toHaveLength(2);
-    expect(collection.records[0]).toEqual([user.id, user.name]);
+    expect(tableData.records).toHaveLength(2);
+    expect(tableData.records[0]).toEqual([user.id, user.name]);
   });
 });
 
 describe('Inserter', () => {
   it('should insert records using various methods', () => {
-    const collection = createCollection();
-    const insert = Inserter(collection);
+    const tableData = createTableData();
+    const insert = Inserter(tableData);
 
     insert.one({ ...user });
-    expect(collection.records).toHaveLength(1);
-    expect(collection.records[0]).toContain('1');
+    expect(tableData.records).toHaveLength(1);
+    expect(tableData.records[0]).toContain('1');
 
     insert.many({ ...user, id: '2' }, { ...user, id: '3' });
-    expect(collection.records).toHaveLength(3);
-    expect(collection.records[1]).toContain('2');
-    expect(collection.records[2]).toContain('3');
+    expect(tableData.records).toHaveLength(3);
+    expect(tableData.records[1]).toContain('2');
+    expect(tableData.records[2]).toContain('3');
   });
 });

@@ -1,13 +1,13 @@
 import { DatabaseError } from '../error/error';
-import type { Collection, DatabaseRecord, DeleteOne } from '../types/database';
+import type { TableData, DatabaseRecord, DeleteOne } from '../types/database';
 
 export const deleteOne = <Rec extends DatabaseRecord>(
-  collection: Collection<Rec>
+  tableData: TableData<Rec>
 ): DeleteOne<Rec> => {
   return id => {
-    const idIndex = collection.fields.id;
+    const idIndex = tableData.fields.id;
 
-    const indexOfRecord = collection.records.findIndex(
+    const indexOfRecord = tableData.records.findIndex(
       rec => rec[idIndex] === id
     );
 
@@ -17,7 +17,7 @@ export const deleteOne = <Rec extends DatabaseRecord>(
         error: new DatabaseError('NOT-EXISTS', `Couldn't find record ${id}`)
       };
 
-    collection.records.splice(indexOfRecord, 1);
+    tableData.records.splice(indexOfRecord, 1);
     return { data: null, error: null };
   };
 };

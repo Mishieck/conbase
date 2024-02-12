@@ -1,10 +1,10 @@
-import type { Collection, DatabaseRecord, SelectMany } from '../types/database';
+import type { TableData, DatabaseRecord, SelectMany } from '../types/database';
 import { selectOne } from './one';
 
 export const selectMany = <Rec extends DatabaseRecord>(
-  collection: Collection<Rec>
+  tableData: TableData<Rec>
 ): SelectMany<Rec> => {
-  const select = selectOne(collection);
+  const select = selectOne(tableData);
 
   return (...ids) => {
     const results = ids.map(select);

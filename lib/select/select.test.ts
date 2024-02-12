@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import type { Collection, Fields } from '../types/database';
+import type { TableData, Fields } from '../types/database';
 import { selectOne } from './one';
 import { selectMany } from './many';
 import { selectAll } from './all';
@@ -14,7 +14,7 @@ const createArray = (record: User) =>
   [record.id, record.name] as Array<User[keyof User]>;
 const userArray = createArray(userRecord);
 
-const createCollection = (): Collection<User> => ({
+const createTableData = (): TableData<User> => ({
   name: 'Users',
   fields,
   index: null,
@@ -24,8 +24,8 @@ const createCollection = (): Collection<User> => ({
 describe('selectOne', () => {
   it('should select a record', () => {
     const expectedRecord = createUser();
-    const collection = createCollection();
-    const { data: record } = selectOne(collection)(userRecord.id);
+    const tableData = createTableData();
+    const { data: record } = selectOne(tableData)(userRecord.id);
     expect(record).toEqual(expectedRecord);
   });
 });
@@ -34,12 +34,12 @@ describe('selectMany', () => {
   it('should select many records', () => {
     const records = [createUser(), { ...createUser(), id: '2' }];
 
-    const collection = {
-      ...createCollection(),
+    const tableData = {
+      ...createTableData(),
       records: records.map(createArray)
     };
 
-    const { data } = selectMany<User>(collection)('1', '2');
+    const { data } = selectMany<User>(tableData)('1', '2');
 
     records.forEach((expected, i) => {
       const actual = data?.[i];
@@ -57,12 +57,12 @@ describe('selectAll', () => {
   it('should select all records', () => {
     const records = [createUser(), { ...createUser(), id: '2' }];
 
-    const collection = {
-      ...createCollection(),
+    const tableData = {
+      ...createTableData(),
       records: records.map(createArray)
     };
 
-    const { data } = selectAll<User>(collection)();
+    const { data } = selectAll<User>(tableData)();
 
     records.forEach((expected, i) => {
       const actual = data?.[i];
@@ -80,12 +80,12 @@ describe('Selector', () => {
   it('should select records using various methods', () => {
     const records = [createUser(), { ...createUser(), id: '2' }];
 
-    const collection = {
-      ...createCollection(),
+    const tableData = {
+      ...createTableData(),
       records: records.map(createArray)
     };
 
-    const select = Selector(collection);
+    const select = Selector(tableData);
     expect(select.one('1').data).toMatchObject({ id: '1' });
     expect(select.many('1', '2').data).toHaveLength(2);
     expect(select.all().data).toHaveLength(2);

@@ -1,10 +1,10 @@
-import type { Collection, DatabaseRecord, Insert } from '../types/database';
+import type { TableData, DatabaseRecord, Insert } from '../types/database';
 import { insertMany } from './many';
 import { insertOne } from './one';
 
 export const Inserter = <Rec extends DatabaseRecord>(
-  collection: Collection<Rec>
+  tableData: TableData<Rec>
 ): Insert<Rec> => ({
-  one: insertOne(collection),
-  many: insertMany(collection)
+  one: insertOne(tableData),
+  many: insertMany(tableData)
 });

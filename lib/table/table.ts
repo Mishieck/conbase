@@ -2,11 +2,11 @@ import { Remover } from '../delete/delete';
 import { Inserter } from '../insert/insert';
 import { Selector } from '../select/select';
 import type {
-  Collection,
-  CollectionHandler as CollectionHandlerType,
+  Table as TableType,
   DatabaseRecord,
   Fields,
-  Index
+  Index,
+  TableData
 } from '../types/database';
 import { Updater } from '../update/update';
 
@@ -18,11 +18,11 @@ export const createFields = <Rec extends DatabaseRecord>(
     {} as Fields<Rec>
   );
 
-export const createCollection = <Rec extends DatabaseRecord>(
+export const createTableData = <Rec extends DatabaseRecord>(
   name: string,
   fields: Array<keyof Rec>,
   useIndex: boolean
-): Collection<Rec> => {
+): TableData<Rec> => {
   return {
     name,
     fields: createFields(...fields),
@@ -31,17 +31,17 @@ export const createCollection = <Rec extends DatabaseRecord>(
   };
 };
 
-export const CollectionHandler = <Rec extends DatabaseRecord>(
+export const Table = <Rec extends DatabaseRecord>(
   name: string,
   fields: Array<keyof Rec>,
   useIndex: boolean = false
-): CollectionHandlerType<Rec> => {
-  const collection = createCollection(name, fields, useIndex);
+): TableType<Rec> => {
+  const tableData = createTableData(name, fields, useIndex);
 
   return {
-    insert: Inserter(collection),
-    select: Selector(collection),
-    update: Updater(collection),
-    delete: Remover(collection)
+    insert: Inserter(tableData),
+    select: Selector(tableData),
+    update: Updater(tableData),
+    delete: Remover(tableData)
   };
 };

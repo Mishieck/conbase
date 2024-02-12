@@ -1,15 +1,15 @@
 import { DatabaseError } from '../error/error';
 import { convertArrayToRecord } from '../record-converter/record-converter';
-import type { Collection, DatabaseRecord, UpdateOne } from '../types/database';
+import type { TableData, DatabaseRecord, UpdateOne } from '../types/database';
 
 export const updateOne = <Rec extends DatabaseRecord>(
-  collection: Collection<Rec>
+  tableData: TableData<Rec>
 ): UpdateOne<Rec> => {
-  const convertToRecord = convertArrayToRecord<Rec>(collection.fields);
+  const convertToRecord = convertArrayToRecord<Rec>(tableData.fields);
 
   return update => {
-    const record = collection.records.find(
-      rec => rec[collection.fields.id] === update.id
+    const record = tableData.records.find(
+      rec => rec[tableData.fields.id] === update.id
     );
 
     if (!record)
@@ -22,7 +22,7 @@ export const updateOne = <Rec extends DatabaseRecord>(
       };
 
     for (const field in update)
-      record[collection.fields[field]] = update[field as keyof Rec];
+      record[tableData.fields[field]] = update[field as keyof Rec];
 
     return { data: convertToRecord(record), error: null };
   };

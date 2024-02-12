@@ -1,10 +1,10 @@
-import type { Collection, DatabaseRecord, Update } from '../types/database';
+import type { TableData, DatabaseRecord, Update } from '../types/database';
 import { updateMany } from './many';
 import { updateOne } from './one';
 
 export const Updater = <Rec extends DatabaseRecord>(
-  collection: Collection<Rec>
+  tableData: TableData<Rec>
 ): Update<Rec> => ({
-  one: updateOne(collection),
-  many: updateMany(collection)
+  one: updateOne(tableData),
+  many: updateMany(tableData)
 });

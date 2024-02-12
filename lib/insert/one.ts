@@ -1,16 +1,16 @@
 import { DatabaseError } from '../error/error';
 import { convertRecordToArray } from '../record-converter/record-converter';
-import type { Collection, DatabaseRecord, InsertOne } from '../types/database';
+import type { TableData, DatabaseRecord, InsertOne } from '../types/database';
 
 export const insertOne =
-  <Rec extends DatabaseRecord>(collection: Collection<Rec>): InsertOne<Rec> =>
+  <Rec extends DatabaseRecord>(tableData: TableData<Rec>): InsertOne<Rec> =>
   record => {
     let exists: boolean;
-    if (collection.index) exists = record.id in collection.index;
-    else exists = !!collection.records.find(([id]) => id === record.id);
+    if (tableData.index) exists = record.id in tableData.index;
+    else exists = !!tableData.records.find(([id]) => id === record.id);
 
     if (exists) {
-      const message = `Record '${record.id}' already exists in '${collection.name}'.`;
+      const message = `Record '${record.id}' already exists in '${tableData.name}'.`;
 
       return {
         data: null,
@@ -18,10 +18,10 @@ export const insertOne =
       };
     }
 
-    collection.records.push(convertRecordToArray(collection.fields)(record));
+    tableData.records.push(convertRecordToArray(tableData.fields)(record));
 
-    if (collection.index)
-      collection.index[record.id] = collection.records.length - 1;
+    if (tableData.index)
+      tableData.index[record.id] = tableData.records.length - 1;
 
     return { data: null, error: null };
   };

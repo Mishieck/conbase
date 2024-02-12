@@ -8,10 +8,10 @@ export type DatabaseResult<Data = null> = {
   error: Nullable<DatabaseError>;
 };
 
-export type CollectionUtil<
+export type TableDataUtil<
   Rec extends DatabaseRecord,
   Util extends CallableFunction
-> = (collection: Collection<Rec>) => Util;
+> = (tableData: TableData<Rec>) => Util;
 
 export type DatabaseRecordPartial<Rec extends DatabaseRecord> = Partial<Rec> &
   Pick<Rec, 'id'>;
@@ -80,14 +80,14 @@ export type Fields<Rec extends DatabaseRecord> = Record<keyof Rec, number>;
 
 export type Index<Rec extends DatabaseRecord> = Record<Rec['id'], number>;
 
-export type Collection<Rec extends DatabaseRecord> = {
+export type TableData<Rec extends DatabaseRecord> = {
   name: string;
   fields: Fields<Rec>;
   records: Array<Array<unknown>>;
   index: Index<Rec> | null;
 };
 
-export type CollectionHandler<Rec extends DatabaseRecord> = {
+export type Table<Rec extends DatabaseRecord> = {
   insert: Insert<Rec>;
   select: Select<Rec>;
   update: Update<Rec>;

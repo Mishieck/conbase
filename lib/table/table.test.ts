@@ -1,10 +1,6 @@
 import { describe, it, expect } from 'bun:test';
 import type { Fields } from '../types/database';
-import {
-  CollectionHandler,
-  createCollection,
-  createFields
-} from './collection-handler';
+import { Table, createTableData, createFields } from './table';
 
 type User = { id: string; name: string };
 
@@ -27,23 +23,23 @@ describe('createFields', () => {
   });
 });
 
-describe('createCollection', () => {
-  it('should create collection', () => {
-    const collection = createCollection<User>('Users', ['id', 'name'], false);
+describe('createTableData', () => {
+  it('should create tableData', () => {
+    const tableData = createTableData<User>('Users', ['id', 'name'], false);
 
-    expect(collection).toMatchObject({
+    expect(tableData).toMatchObject({
       name: 'Users',
       fields: { id: 0, name: 1 },
       index: null
     });
 
-    expect(collection.records).toBeInstanceOf(Array);
+    expect(tableData.records).toBeInstanceOf(Array);
   });
 });
 
-describe('CollectionHandler', () => {
-  it('should perform operations on a collection', () => {
-    const handler = CollectionHandler('Users', ['id', 'name']);
+describe('Table', () => {
+  it('should perform operations on a tableData', () => {
+    const handler = Table('Users', ['id', 'name']);
     handler.insert.one(createUser());
     expect(handler.select.one('1').data).toMatchObject(userRecord);
     const updatedName = 'Updated Name';

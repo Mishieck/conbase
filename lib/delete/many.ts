@@ -1,10 +1,10 @@
-import type { Collection, DatabaseRecord, DeleteMany } from '../types/database';
+import type { TableData, DatabaseRecord, DeleteMany } from '../types/database';
 import { deleteOne } from './one';
 
 export const deleteMany = <Rec extends DatabaseRecord>(
-  collection: Collection<Rec>
+  tableData: TableData<Rec>
 ): DeleteMany<Rec> => {
-  const remove = deleteOne(collection);
+  const remove = deleteOne(tableData);
 
   return (...ids) => {
     const results = ids.map(remove);

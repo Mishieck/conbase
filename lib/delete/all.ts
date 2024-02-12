@@ -1,10 +1,10 @@
-import type { Collection, DatabaseRecord, DeleteAll } from '../types/database';
+import type { TableData, DatabaseRecord, DeleteAll } from '../types/database';
 
 export const deleteAll = <Rec extends DatabaseRecord>(
-  collection: Collection<Rec>
+  tableData: TableData<Rec>
 ): DeleteAll => {
   return () => {
-    collection.records = [];
+    tableData.records = [];
     return { data: null, error: null };
   };
 };
