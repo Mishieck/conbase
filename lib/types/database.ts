@@ -13,7 +13,7 @@ export type CollectionUtil<
   Util extends CallableFunction
 > = (collection: Collection<Rec>) => Util;
 
-export type UpdateRecord<Rec extends DatabaseRecord> = Partial<Rec> &
+export type DatabaseRecordPartial<Rec extends DatabaseRecord> = Partial<Rec> &
   Pick<Rec, 'id'>;
 
 export type InsertOne<Rec extends DatabaseRecord> = (
@@ -37,20 +37,22 @@ export type SelectAll<Rec extends DatabaseRecord> = () => DatabaseResult<
 >;
 
 export type UpdateOne<Rec extends DatabaseRecord> = (
-  record: UpdateRecord<Rec>
-) => void;
+  record: DatabaseRecordPartial<Rec>
+) => DatabaseResult<Rec>;
 
 export type UpdateMany<Rec extends DatabaseRecord> = (
-  ...records: Array<UpdateRecord<Rec>>
-) => void;
+  ...records: Array<DatabaseRecordPartial<Rec>>
+) => DatabaseResult<Array<Rec>>;
 
-export type DeleteOne<Rec extends DatabaseRecord> = (id: Rec['id']) => void;
+export type DeleteOne<Rec extends DatabaseRecord> = (
+  id: Rec['id']
+) => DatabaseResult;
 
 export type DeleteMany<Rec extends DatabaseRecord> = (
   ...ids: Array<Rec['id']>
-) => void;
+) => DatabaseResult;
 
-export type DeleteAll = () => void;
+export type DeleteAll = () => DatabaseResult;
 
 export type Insert<Rec extends DatabaseRecord> = {
   one: InsertOne<Rec>;
@@ -81,4 +83,11 @@ export type Collection<Rec extends DatabaseRecord> = {
   fields: Index;
   records: Array<Array<unknown>>;
   index: Nullable<Index>;
+};
+
+export type CollectionHandler<Rec extends DatabaseRecord> = {
+  insert: Insert<Rec>;
+  select: Select<Rec>;
+  update: Update<Rec>;
+  delete: Delete<Rec>;
 };
