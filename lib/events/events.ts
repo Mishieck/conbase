@@ -40,7 +40,9 @@ export const DatabaseEvent = <Rec extends DatabaseRecord>(
 ): Event<Rec> => {
   const operationFlags: OperationFlags = { ...defaultOperationFlags };
   const [name, count] = operation;
-  operationFlags[name][count] = true;
+  const counts = { ...operationFlags[name] };
+  counts[count] = true;
+  operationFlags[name] = counts;
 
   return {
     is: operationFlags,
