@@ -10,22 +10,24 @@ export const selectOne = <Rec extends DatabaseRecord>(
   const convert = convertArrayToRecord<Rec>(tableData.fields);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
 
-  return id => {
+  return (id, emitEvent = true) => {
     let record = tableData.index
       ? tableData.records[tableData.index[id]]
       : tableData.records.find(record => record[0] === id);
 
     const data = record ? convert(record) : null;
 
-    notifyObservers(
-      ['select', 'one'],
-      {
-        isFetching: false,
-        isSuccess: !!record,
-        isEmpty: tableData.records.length === 0
-      },
-      data ? [data] : null
-    );
+    if (emitEvent) {
+      notifyObservers(
+        ['select', 'one'],
+        {
+          isFetching: false,
+          isSuccess: !!record,
+          isEmpty: tableData.records.length === 0
+        },
+        data ? [data] : null
+      );
+    }
 
     return {
       data,

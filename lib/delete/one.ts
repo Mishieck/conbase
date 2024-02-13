@@ -8,7 +8,7 @@ export const deleteOne = <Rec extends DatabaseRecord>(
 ): DeleteOne<Rec> => {
   const notifyObservers = databaseEventEmitter.notifyObservers(tableData);
 
-  return id => {
+  return (id, emitEvent = true) => {
     const idIndex = tableData.fields.id;
 
     const indexOfRecord = tableData.records.findIndex(
@@ -17,15 +17,17 @@ export const deleteOne = <Rec extends DatabaseRecord>(
 
     if (indexOfRecord >= 0) tableData.records.splice(indexOfRecord, 1);
 
-    notifyObservers(
-      ['delete', 'one'],
-      {
-        isFetching: false,
-        isSuccess: indexOfRecord >= 0,
-        isEmpty: tableData.records.length === 0
-      },
-      null
-    );
+    if (emitEvent) {
+      notifyObservers(
+        ['delete', 'one'],
+        {
+          isFetching: false,
+          isSuccess: indexOfRecord >= 0,
+          isEmpty: tableData.records.length === 0
+        },
+        null
+      );
+    }
 
     return {
       data: null,

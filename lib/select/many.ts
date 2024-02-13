@@ -14,7 +14,7 @@ export const selectMany = <Rec extends DatabaseRecord>(
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
 
   return (...ids) => {
-    const results = ids.map<DatabaseResult<Rec>>(select);
+    const results = ids.map<DatabaseResult<Rec>>(id => select(id, false));
     const error = results.find(({ error }) => error)?.error ?? null;
 
     const data = error ? null : results.map(({ data }) => data as Rec);

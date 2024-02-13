@@ -14,7 +14,7 @@ export const updateMany = <Rec extends DatabaseRecord>(
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
 
   return (...updates) => {
-    const results = updates.map<DatabaseResult<Rec>>(update);
+    const results = updates.map<DatabaseResult<Rec>>(up => update(up, false));
     const maybeError = results.find(({ error }) => !!error);
 
     const data = maybeError

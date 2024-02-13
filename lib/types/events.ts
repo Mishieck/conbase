@@ -20,15 +20,21 @@ export type DatabaseEventObserver<Rec extends DatabaseRecord> = (
   event: DatabaseEvent<Rec>
 ) => void;
 
+export type AddObserver<Rec extends DatabaseRecord> = (
+  observe: DatabaseEventObserver<Rec>
+) => void;
+
+export type NotifyObservers<Rec extends DatabaseRecord> = (
+  operation: Operation,
+  status: Omit<EventStatusRecord, 'isError'>,
+  data: Array<Rec> | null
+) => void;
+
 export type DatabaseEventEmitter = {
   addObserver: <Rec extends DatabaseRecord>(
     tableData: TableData<Rec>
-  ) => (observe: DatabaseEventObserver<Rec>) => void;
+  ) => AddObserver<Rec>;
   notifyObservers: <Rec extends DatabaseRecord>(
     tableData: TableData<Rec>
-  ) => (
-    operation: Operation,
-    status: Omit<EventStatusRecord, 'isError'>,
-    data: Array<Rec> | null
-  ) => void;
+  ) => NotifyObservers<Rec>;
 };

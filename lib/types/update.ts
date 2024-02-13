@@ -5,7 +5,8 @@ import type {
 } from './database';
 
 export type UpdateOne<Rec extends DatabaseRecord> = (
-  record: DatabaseRecordPartial<Rec>
+  record: DatabaseRecordPartial<Rec>,
+  emitEvent?: boolean
 ) => DatabaseResult<Rec>;
 
 export type UpdateMany<Rec extends DatabaseRecord> = (

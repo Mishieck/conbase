@@ -9,7 +9,7 @@ export const insertOne = <Rec extends DatabaseRecord>(
 ): InsertOne<Rec> => {
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
 
-  return record => {
+  return (record, emitEvent = true) => {
     let exists: boolean;
 
     if (tableData.index) exists = record.id in tableData.index;
@@ -21,15 +21,17 @@ export const insertOne = <Rec extends DatabaseRecord>(
     if (tableData.index)
       tableData.index[record.id as Rec['id']] = tableData.records.length - 1;
 
-    notifyObservers(
-      ['insert', 'one'],
-      {
-        isFetching: false,
-        isSuccess: !exists,
-        isEmpty: tableData.records.length === 0
-      },
-      [record]
-    );
+    if (emitEvent) {
+      notifyObservers(
+        ['insert', 'one'],
+        {
+          isFetching: false,
+          isSuccess: !exists,
+          isEmpty: tableData.records.length === 0
+        },
+        [record]
+      );
+    }
 
     return {
       data: null,

@@ -13,7 +13,7 @@ export const insertAll = <Rec extends DatabaseRecord>(
 
   return (...records) => {
     console.log('record length', records.length);
-    for (const record of records) insert(record);
+    for (const record of records) insert(record, false);
 
     notifyObservers(
       ['insert', 'all'],

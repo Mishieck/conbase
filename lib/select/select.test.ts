@@ -4,6 +4,15 @@ import { selectOne } from './one';
 import { selectMany } from './many';
 import { selectAll } from './all';
 import { Selector } from './select';
+import {
+  clearUserObservers,
+  clearUserRecords,
+  createUserArray,
+  createUserEvent,
+  createUserRecord,
+  createUserTableData,
+  observeEvents
+} from '../utils/tests';
 
 type User = { id: string; name: string };
 
@@ -90,5 +99,80 @@ describe('Selector', () => {
     expect(select.one('1').data).toMatchObject({ id: '1' });
     expect(select.many('1', '2').data).toHaveLength(2);
     expect(select.all().data).toHaveLength(2);
+  });
+});
+
+describe('Selector Events', () => {
+  const tableData = createUserTableData();
+  const observe = observeEvents(tableData);
+  const clearRecords = clearUserRecords(tableData);
+  const clearObservers = clearUserObservers(tableData);
+
+  it('should handle events for selectOne', async () => {
+    clearRecords();
+    clearObservers();
+    tableData.records.push(createUserArray(1));
+
+    const event = await observe(() => selectOne(tableData)('1'));
+
+    expect(event).toBeDefined();
+
+    expect(event).toMatchObject(
+      createUserEvent(['select', 'one'], {
+        isFetching: false,
+        isSuccess: true,
+        isEmpty: false
+      })
+    );
+
+    expect(event.data).toHaveLength(1);
+    expect(event.data?.[0]).toMatchObject(createUserRecord(1));
+  });
+
+  it('should handle events for selectMany', async () => {
+    clearRecords();
+    clearObservers();
+    tableData.records.push(
+      createUserArray(1),
+      createUserArray(2),
+      createUserArray(3)
+    );
+
+    const event = await observe(() => selectMany(tableData)('1', '2'));
+
+    expect(event).toBeDefined();
+
+    expect(event).toMatchObject(
+      createUserEvent(['select', 'many'], {
+        isFetching: false,
+        isSuccess: true,
+        isEmpty: false
+      })
+    );
+
+    expect(event.data).toHaveLength(2);
+    expect(event.data?.[0]).toMatchObject(createUserRecord(1));
+  });
+
+  it('should handle events for selectAll', async () => {
+    clearRecords();
+    clearObservers();
+
+    tableData.records.push(createUserArray(1), createUserArray(2));
+
+    const event = await observe(() => selectAll(tableData)());
+
+    expect(event).toBeDefined();
+
+    expect(event).toMatchObject(
+      createUserEvent(['select', 'all'], {
+        isFetching: false,
+        isSuccess: true,
+        isEmpty: false
+      })
+    );
+
+    expect(event.data).toHaveLength(2);
+    expect(event.data?.[0]).toMatchObject(createUserRecord(1));
   });
 });

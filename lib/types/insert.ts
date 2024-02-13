@@ -1,7 +1,8 @@
 import type { DatabaseRecord, DatabaseResult } from './database';
 
 export type InsertOne<Rec extends DatabaseRecord> = (
-  record: Rec
+  record: Rec,
+  emitEvent?: boolean
 ) => DatabaseResult;
 
 export type InsertMany<Rec extends DatabaseRecord> = (

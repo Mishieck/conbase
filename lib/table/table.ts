@@ -1,4 +1,5 @@
 import { Remover } from '../delete/delete';
+import { databaseEventEmitter } from '../events/events';
 import { Inserter } from '../insert/insert';
 import { Selector } from '../select/select';
 import type {
@@ -43,6 +44,7 @@ export const Table = <Rec extends DatabaseRecord>(
     insert: Inserter(tableData),
     select: Selector(tableData),
     update: Updater(tableData),
-    delete: Remover(tableData)
+    delete: Remover(tableData),
+    add: { observer: databaseEventEmitter.addObserver(tableData) }
   };
 };

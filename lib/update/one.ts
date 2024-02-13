@@ -10,7 +10,7 @@ export const updateOne = <Rec extends DatabaseRecord>(
   const convertToRecord = convertArrayToRecord<Rec>(tableData.fields);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
 
-  return update => {
+  return (update, emitEvent = true) => {
     const record = tableData.records.find(
       rec => rec[tableData.fields.id] === update.id
     );
@@ -29,15 +29,17 @@ export const updateOne = <Rec extends DatabaseRecord>(
 
     const data = convertToRecord(record);
 
-    notifyObservers(
-      ['update', 'one'],
-      {
-        isFetching: false,
-        isSuccess: true,
-        isEmpty: tableData.records.length === 0
-      },
-      [data]
-    );
+    if (emitEvent) {
+      notifyObservers(
+        ['update', 'one'],
+        {
+          isFetching: false,
+          isSuccess: true,
+          isEmpty: tableData.records.length === 0
+        },
+        [data]
+      );
+    }
 
     return { data, error: null };
   };

@@ -1,7 +1,8 @@
 import type { DatabaseRecord, DatabaseResult } from './database';
 
 export type DeleteOne<Rec extends DatabaseRecord> = (
-  id: Rec['id']
+  id: Rec['id'],
+  emitEvent?: boolean
 ) => DatabaseResult;
 
 export type DeleteMany<Rec extends DatabaseRecord> = (

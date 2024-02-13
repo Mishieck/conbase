@@ -4,6 +4,15 @@ import { updateOne } from './one';
 import { updateMany } from './many';
 import { Updater } from './update';
 import { updateAll } from './all';
+import {
+  clearUserObservers,
+  clearUserRecords,
+  createUserArray,
+  createUserEvent,
+  createUserRecord,
+  createUserTableData,
+  observeEvents
+} from '../utils/tests';
 
 type User = { id: string; name: string };
 
@@ -173,5 +182,84 @@ describe('Updater', () => {
 
     expect(tableData.records[0]).toContain(createName(updatedName)('2'));
     expect(tableData.records[1]).toContain(createName(updatedName)('3'));
+  });
+});
+
+describe('Updater Events', () => {
+  const tableData = createUserTableData();
+  const clearObservers = clearUserObservers(tableData);
+  const clearRecords = clearUserRecords(tableData);
+  const observe = observeEvents(tableData);
+
+  it('should handle events for updateOne', async () => {
+    clearRecords();
+    clearObservers();
+
+    tableData.records.push(createUserArray(1));
+
+    const event = await observe(() =>
+      updateOne(tableData)(createUserRecord(1, 'Updated'))
+    );
+
+    expect(event).toBeDefined();
+
+    expect(event).toMatchObject(
+      createUserEvent(['update', 'one'], {
+        isFetching: false,
+        isSuccess: true,
+        isEmpty: false
+      })
+    );
+
+    expect(event.data?.[0]).toMatchObject(createUserRecord(1, 'Updated'));
+  });
+
+  it('should handle events for updateMany', async () => {
+    clearRecords();
+    clearObservers();
+
+    tableData.records.push(createUserArray(1), createUserArray(2));
+
+    const event = await observe(() =>
+      updateMany(tableData)(
+        createUserRecord(1, 'Updated'),
+        createUserRecord(2, 'Updated')
+      )
+    );
+
+    expect(event).toBeDefined();
+
+    expect(event).toMatchObject(
+      createUserEvent(['update', 'many'], {
+        isFetching: false,
+        isSuccess: true,
+        isEmpty: false
+      })
+    );
+
+    expect(event.data?.[0]).toMatchObject(createUserRecord(1, 'Updated'));
+  });
+
+  it('should handle events for updateAll', async () => {
+    clearRecords();
+    clearObservers();
+
+    tableData.records.push(createUserArray(1), createUserArray(2));
+
+    const event = await observe(() =>
+      updateAll(tableData)(record => ({ ...record, name: 'Updated' }))
+    );
+
+    expect(event).toBeDefined();
+
+    expect(event).toMatchObject(
+      createUserEvent(['update', 'all'], {
+        isFetching: false,
+        isSuccess: true,
+        isEmpty: false
+      })
+    );
+
+    expect(event.data?.[0]).toMatchObject(createUserRecord(1, 'Updated'));
   });
 });

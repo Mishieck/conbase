@@ -1,7 +1,8 @@
 import type { DatabaseRecord, DatabaseResult } from './database';
 
 export type SelectOne<Rec extends DatabaseRecord> = (
-  id: Rec['id']
+  id: Rec['id'],
+  emitEvent?: boolean
 ) => DatabaseResult<Rec>;
 
 export type SelectMany<Rec extends DatabaseRecord> = (
