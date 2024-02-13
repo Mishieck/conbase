@@ -7,12 +7,14 @@ export * as OperationsTypes from './lib/types/operations';
 export * as SelectTypes from './lib/types/select';
 export * as TableTypes from './lib/types/table';
 export * as UpdateTypes from './lib/types/update';
+export * as FetchTypes from './lib/types/fetch';
 
 /* Operations */
 export * from './lib/delete/delete';
 export * from './lib/insert/insert';
 export * from './lib/select/select';
 export * from './lib/update/update';
+export * from './lib/fetch/fetch';
 
 /* Other */
 export * from './lib/record-converter/record-converter';

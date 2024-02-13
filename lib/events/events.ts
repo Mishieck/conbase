@@ -12,14 +12,15 @@ import type {
   OperationName
 } from '../types/operations';
 
-const operationNames: Array<OperationName> = [
+export const operationNames: Array<OperationName> = [
   'delete',
   'insert',
   'select',
-  'update'
+  'update',
+  'fetch'
 ];
 
-const operationCounts: Array<OperationCount> = ['all', 'many', 'one'];
+export const operationCounts: Array<OperationCount> = ['all', 'many', 'one'];
 
 const operationCountRecord = operationCounts.reduce(
   (flags, count) => ({ ...flags, [count]: false }),
