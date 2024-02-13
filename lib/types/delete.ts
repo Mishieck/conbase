@@ -6,7 +6,7 @@ export type DeleteOne<Rec extends DatabaseRecord> = (
 ) => DatabaseResult;
 
 export type DeleteMany<Rec extends DatabaseRecord> = (
-  ...ids: Array<Rec['id']>
+  ids: Array<Rec['id']>
 ) => DatabaseResult;
 
 export type DeleteAll = () => DatabaseResult;

@@ -13,7 +13,7 @@ export const selectMany = <Rec extends DatabaseRecord>(
   const select = selectOne(tableData);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
 
-  return (...ids) => {
+  return ids => {
     const results = ids.map<DatabaseResult<Rec>>(id => select(id, false));
     const error = results.find(({ error }) => error)?.error ?? null;
 

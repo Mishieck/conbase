@@ -9,7 +9,7 @@ export const deleteMany = <Rec extends DatabaseRecord>(
   const remove = deleteOne(tableData);
   const notifyObservers = databaseEventEmitter.notifyObservers(tableData);
 
-  return (...ids) => {
+  return ids => {
     const results = ids.map(id => remove(id, false));
     const maybeError = results.find(({ error }) => error)?.error;
 

@@ -10,7 +10,7 @@ export type UpdateOne<Rec extends DatabaseRecord> = (
 ) => DatabaseResult<Rec>;
 
 export type UpdateMany<Rec extends DatabaseRecord> = (
-  ...records: Array<DatabaseRecordPartial<Rec>>
+  records: Array<DatabaseRecordPartial<Rec>>
 ) => DatabaseResult<Array<Rec>>;
 
 export type UpdateCallback<Rec extends DatabaseRecord> = (record: Rec) => Rec;

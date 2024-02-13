@@ -9,7 +9,7 @@ export const insertMany = <Rec extends DatabaseRecord>(
   const insert = insertOne(tableData);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
 
-  return (...records) => {
+  return records => {
     console.log('record length', records.length);
     for (const record of records) insert(record, false);
 

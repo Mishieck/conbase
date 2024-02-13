@@ -49,7 +49,7 @@ describe('selectMany', () => {
       records: records.map(createArray)
     };
 
-    const { data } = selectMany<User>(tableData)('1', '2');
+    const { data } = selectMany<User>(tableData)(['1', '2']);
 
     records.forEach((expected, i) => {
       const actual = data?.[i];
@@ -97,7 +97,7 @@ describe('Selector', () => {
 
     const select = Selector(tableData);
     expect(select.one('1').data).toMatchObject({ id: '1' });
-    expect(select.many('1', '2').data).toHaveLength(2);
+    expect(select.many(['1', '2']).data).toHaveLength(2);
     expect(select.all().data).toHaveLength(2);
   });
 });
@@ -138,7 +138,7 @@ describe('Selector Events', () => {
       createUserArray(3)
     );
 
-    const event = await observe(() => selectMany(tableData)('1', '2'));
+    const event = await observe(() => selectMany(tableData)(['1', '2']));
 
     expect(event).toBeDefined();
 

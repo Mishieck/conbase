@@ -6,7 +6,7 @@ export type SelectOne<Rec extends DatabaseRecord> = (
 ) => DatabaseResult<Rec>;
 
 export type SelectMany<Rec extends DatabaseRecord> = (
-  ...ids: Array<Rec['id']>
+  ids: Array<Rec['id']>
 ) => DatabaseResult<Array<Rec>>;
 
 export type SelectAll<Rec extends DatabaseRecord> = () => DatabaseResult<

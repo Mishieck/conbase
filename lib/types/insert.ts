@@ -6,11 +6,11 @@ export type InsertOne<Rec extends DatabaseRecord> = (
 ) => DatabaseResult;
 
 export type InsertMany<Rec extends DatabaseRecord> = (
-  ...records: Array<Rec>
+  records: Array<Rec>
 ) => DatabaseResult;
 
 export type InsertAll<Rec extends DatabaseRecord> = (
-  ...records: Array<Rec>
+  records: Array<Rec>
 ) => DatabaseResult<Array<Rec>>;
 
 export type Insert<Rec extends DatabaseRecord> = {

@@ -11,7 +11,7 @@ export const insertAll = <Rec extends DatabaseRecord>(
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
   const convertToRecord = convertArrayToRecord(tableData.fields);
 
-  return (...records) => {
+  return records => {
     console.log('record length', records.length);
     for (const record of records) insert(record, false);
 

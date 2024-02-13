@@ -70,10 +70,10 @@ describe('updateMany', () => {
     expect(tableData.records[0]).toContain(createName(initialName)('1'));
     expect(tableData.records[1]).toContain(createName(initialName)('2'));
 
-    updateMany(tableData)(
+    updateMany(tableData)([
       { id: '1', name: createName(updatedName)('1') },
       { id: '2', name: createName(updatedName)('2') }
-    );
+    ]);
 
     expect(tableData.records[0]).toContain(createName(updatedName)('1'));
     expect(tableData.records[1]).toContain(createName(updatedName)('2'));
@@ -92,10 +92,10 @@ describe('updateMany', () => {
     expect(tableData.records[0]).toContain(createName(initialName)('1'));
     expect(tableData.records[1]).toContain(createName(initialName)('2'));
 
-    const { error } = updateMany(tableData)(
+    const { error } = updateMany(tableData)([
       { id: '1', name: createName(updatedName)('1') },
       { id: '3', name: createName(updatedName)('3') }
-    );
+    ]);
 
     expect(error).toBeDefined();
     expect(error).toMatchObject({ cause: 'NOT-EXISTS' });
@@ -175,10 +175,10 @@ describe('Updater', () => {
     update.one({ id: '1', name: createName(updatedName)('1') });
     expect(tableData.records[0]).toContain(createName(updatedName)('1'));
 
-    update.many(
+    update.many([
       { id: '1', name: createName(updatedName)('2') },
       { id: '2', name: createName(updatedName)('3') }
-    );
+    ]);
 
     expect(tableData.records[0]).toContain(createName(updatedName)('2'));
     expect(tableData.records[1]).toContain(createName(updatedName)('3'));
@@ -221,10 +221,10 @@ describe('Updater Events', () => {
     tableData.records.push(createUserArray(1), createUserArray(2));
 
     const event = await observe(() =>
-      updateMany(tableData)(
+      updateMany(tableData)([
         createUserRecord(1, 'Updated'),
         createUserRecord(2, 'Updated')
-      )
+      ])
     );
 
     expect(event).toBeDefined();

@@ -58,7 +58,7 @@ describe('insertMany', () => {
   it('should insert multiple records', () => {
     const tableData = createUserTableData();
     const insert = insertMany(tableData);
-    insert({ ...user }, { ...user, id: '2' });
+    insert([{ ...user }, { ...user, id: '2' }]);
 
     expect(tableData.records).toHaveLength(2);
     expect(tableData.records[0]).toEqual([user.id, user.name]);
@@ -69,7 +69,7 @@ describe('insertAll', () => {
   it('should insert multiple records', () => {
     const tableData = createUserTableData();
     const insert = insertAll(tableData);
-    insert({ ...user }, { ...user, id: '2' });
+    insert([{ ...user }, { ...user, id: '2' }]);
 
     expect(tableData.records).toHaveLength(2);
     expect(tableData.records[0]).toEqual([user.id, user.name]);
@@ -85,7 +85,10 @@ describe('Inserter', () => {
     expect(tableData.records).toHaveLength(1);
     expect(tableData.records[0]).toContain('1');
 
-    insert.many({ ...user, id: '2' }, { ...user, id: '3' });
+    insert.many([
+      { ...user, id: '2' },
+      { ...user, id: '3' }
+    ]);
     expect(tableData.records).toHaveLength(3);
     expect(tableData.records[1]).toContain('2');
     expect(tableData.records[2]).toContain('3');
@@ -125,7 +128,7 @@ describe('Inserter Events', () => {
     clearObservers();
 
     const event = await observe(() =>
-      insertMany(tableData)(createUserRecord(1), createUserRecord(2))
+      insertMany(tableData)([createUserRecord(1), createUserRecord(2)])
     );
 
     expect(event).toBeDefined();
@@ -147,7 +150,7 @@ describe('Inserter Events', () => {
     clearObservers();
 
     const event = await observe(() =>
-      insertAll(tableData)(createUserRecord(1), createUserRecord(2))
+      insertAll(tableData)([createUserRecord(1), createUserRecord(2)])
     );
 
     expect(event).toBeDefined();

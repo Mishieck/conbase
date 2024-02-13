@@ -44,7 +44,7 @@ describe('deleteMany', () => {
     );
 
     expect(tableData.records).toHaveLength(3);
-    deleteMany(tableData)('1', '2');
+    deleteMany(tableData)(['1', '2']);
     expect(tableData.records).toHaveLength(1);
     expect(tableData.records[0]?.[0]).toEqual('3');
   });
@@ -58,7 +58,7 @@ describe('deleteMany', () => {
       ['3', 'Remover 3']
     );
 
-    const { error } = deleteMany(tableData)('1', '4');
+    const { error } = deleteMany(tableData)(['1', '4']);
     expect(error).toBeDefined();
     expect(error).toMatchObject({ cause: 'NOT-EXISTS' });
     expect(tableData.records).toHaveLength(2);
@@ -101,7 +101,7 @@ describe('Remover', () => {
     tableData.records.push(['1', 'Remover 1'], ['2', 'Remover 2']);
     expect(tableData.records).toHaveLength(2);
 
-    remove.many('1', '2');
+    remove.many(['1', '2']);
     expect(tableData.records).toHaveLength(0);
   });
 });
@@ -135,7 +135,7 @@ describe('Remover Events', () => {
     addRecord(2);
     addRecord(3);
 
-    const event = await observe(() => deleteMany(tableData)('1', '2'));
+    const event = await observe(() => deleteMany(tableData)(['1', '2']));
     expect(event).toBeDefined();
 
     expect(event).toMatchObject(
