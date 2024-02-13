@@ -11,3 +11,7 @@ export const Inserter = <Rec extends DatabaseRecord>(
   many: insertMany(tableData),
   all: insertAll(tableData)
 });
+
+export * from './all';
+export * from './one';
+export * from './many';

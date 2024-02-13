@@ -11,3 +11,7 @@ export const Updater = <Rec extends DatabaseRecord>(
   many: updateMany(tableData),
   all: updateAll(tableData)
 });
+
+export * from './all';
+export * from './one';
+export * from './many';

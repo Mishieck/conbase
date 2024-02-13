@@ -11,3 +11,7 @@ export const Remover = <Rec extends DatabaseRecord>(
   many: deleteMany(tableData),
   all: deleteAll(tableData)
 });
+
+export * from './all';
+export * from './one';
+export * from './many';

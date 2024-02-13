@@ -11,3 +11,7 @@ export const Selector = <Rec extends DatabaseRecord>(
   many: selectMany(tableData),
   all: selectAll(tableData)
 });
+
+export * from './all';
+export * from './one';
+export * from './many';
