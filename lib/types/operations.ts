@@ -7,3 +7,8 @@ export type OperationRecord<Value> = Record<
   OperationName,
   OperationCountRecord<Value>
 >;
+
+export type IsOperation = Record<
+  `is${Capitalize<OperationName>}`,
+  () => boolean
+>;

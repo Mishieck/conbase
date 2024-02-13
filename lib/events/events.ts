@@ -7,6 +7,7 @@ import type {
   OperationFlags
 } from '../types/events';
 import type {
+  IsOperation as IsOperationType,
   Operation,
   OperationCount,
   OperationName
@@ -57,3 +58,15 @@ export const databaseEventEmitter: DatabaseEventEmitter = {
     for (const observe of tableData.observers) observe(event);
   }
 };
+
+export const IsOperation = (operationFlags: OperationFlags): IsOperationType =>
+  operationNames.reduce(
+    (isOperation, name) => ({
+      ...isOperation,
+      [`is${name[0].toUpperCase()}${name.substring(
+        1
+      )}` as `is${OperationName}`]: () =>
+        Object.values(operationFlags[name]).some(value => value)
+    }),
+    {} as IsOperationType
+  );
