@@ -47,6 +47,7 @@ export const Table = <Rec extends DatabaseRecord>(
     update: Updater(tableData),
     delete: Remover(tableData),
     fetch: Fetcher(tableData),
-    add: { observer: databaseEventEmitter.addObserver(tableData) }
+    add: { observer: databaseEventEmitter.addObserver(tableData) },
+    get: { latestOperation: () => tableData.latestOperation }
   };
 };

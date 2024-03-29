@@ -23,6 +23,7 @@ export const deleteMany = <Rec extends DatabaseRecord>(
       null
     );
 
+    tableData.latestOperation = 'delete';
     return { data: null, error: maybeError ?? null };
   };
 };

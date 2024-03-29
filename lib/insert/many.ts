@@ -23,6 +23,7 @@ export const insertMany = <Rec extends DatabaseRecord>(
       records
     );
 
+    tableData.latestOperation = 'insert';
     return { data: null, error: null };
   };
 };

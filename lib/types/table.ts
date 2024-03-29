@@ -3,6 +3,7 @@ import type { Delete } from './delete';
 import type { AddObserver } from './events';
 import type { Fetcher } from './fetch';
 import type { Insert } from './insert';
+import type { OperationName } from './operations';
 import type { Select } from './select';
 import type { Update } from './update';
 
@@ -15,4 +16,7 @@ export type Table<Rec extends DatabaseRecord> = {
   add: {
     observer: AddObserver<Rec>;
   };
+  get: {
+    latestOperation: () => OperationName | undefined;
+  }
 };

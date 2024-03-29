@@ -41,6 +41,7 @@ export const updateOne = <Rec extends DatabaseRecord>(
       );
     }
 
+    tableData.latestOperation = 'update';
     return { data, error: null };
   };
 };

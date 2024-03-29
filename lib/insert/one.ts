@@ -33,13 +33,15 @@ export const insertOne = <Rec extends DatabaseRecord>(
       );
     }
 
+    tableData.latestOperation = 'insert';
+
     return {
       data: null,
       error: exists
         ? new DatabaseError(
-            'EXISTS',
-            `Record '${record.id}' already exists in '${tableData.name}'.`
-          )
+          'EXISTS',
+          `Record '${record.id}' already exists in '${tableData.name}'.`
+        )
         : null
     };
   };

@@ -34,9 +34,9 @@ export const selectOne = <Rec extends DatabaseRecord>(
       error: record
         ? null
         : new DatabaseError(
-            'NOT-EXISTS',
-            `Record "${id}" not found in "${tableData.name}".`
-          )
+          'NOT-EXISTS',
+          `Record "${id}" not found in "${tableData.name}".`
+        )
     };
   };
 };

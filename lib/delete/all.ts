@@ -20,6 +20,7 @@ export const deleteAll = <Rec extends DatabaseRecord>(
       null
     );
 
+    tableData.latestOperation = 'delete';
     return { data: null, error: null };
   };
 };

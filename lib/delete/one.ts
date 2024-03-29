@@ -29,6 +29,8 @@ export const deleteOne = <Rec extends DatabaseRecord>(
       );
     }
 
+    tableData.latestOperation = 'delete';
+
     return {
       data: null,
       error:

@@ -25,6 +25,7 @@ export const insertAll = <Rec extends DatabaseRecord>(
       records
     );
 
+    tableData.latestOperation = 'insert';
     return { data: records, error: null };
   };
 };

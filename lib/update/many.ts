@@ -31,6 +31,8 @@ export const updateMany = <Rec extends DatabaseRecord>(
       data
     );
 
+    tableData.latestOperation = 'update';
+
     return {
       data,
       error: maybeError

@@ -30,6 +30,8 @@ export const updateAll = <Rec extends DatabaseRecord>(
       data
     );
 
+    tableData.latestOperation = 'update';
+
     return {
       data,
       error: null
