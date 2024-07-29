@@ -8,6 +8,22 @@ export const insertOne = <Rec extends DatabaseRecord>(
   tableData: TableData<Rec>
 ): InsertOne<Rec> => {
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
+  const observers = tableData.eventObservers;
+
+  const notifyEventObservers = (record: Rec, exists: boolean) => {
+    notifyObservers(
+      ['insert', 'one'],
+      {
+        isFetching: false,
+        isSuccess: !exists,
+        isEmpty: tableData.records.length === 0
+      },
+      [record]
+    );
+
+    observers['insert-one']?.forEach(notify => notify(record));
+    observers['insert']?.forEach(notify => notify([record]));
+  };
 
   return (record, emitEvent = true) => {
     let exists: boolean;
@@ -21,18 +37,7 @@ export const insertOne = <Rec extends DatabaseRecord>(
     if (tableData.index)
       tableData.index[record.id as Rec['id']] = tableData.records.length - 1;
 
-    if (emitEvent) {
-      notifyObservers(
-        ['insert', 'one'],
-        {
-          isFetching: false,
-          isSuccess: !exists,
-          isEmpty: tableData.records.length === 0
-        },
-        [record]
-      );
-    }
-
+    if (emitEvent) notifyEventObservers(record, exists);
     tableData.latestOperation = 'insert';
 
     return {

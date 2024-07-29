@@ -13,6 +13,7 @@ import {
   createUserTableData,
   observeEvents
 } from '../utils/tests';
+import { Table } from '../table/table';
 
 type User = { id: string; name: string };
 
@@ -23,7 +24,8 @@ const createTableData = (
   fields: { id: 0, name: 1 },
   records: [],
   index,
-  observers: []
+  observers: [],
+  eventObservers: {}
 });
 
 describe('updateOne', () => {
@@ -190,6 +192,8 @@ describe('Updater Events', () => {
   const clearObservers = clearUserObservers(tableData);
   const clearRecords = clearUserRecords(tableData);
   const observe = observeEvents(tableData);
+  const table = Table<User>('Users', ['id', 'name']);
+  const user = createUserRecord(1);
 
   it('should handle events for updateOne', async () => {
     clearRecords();
@@ -212,6 +216,17 @@ describe('Updater Events', () => {
     );
 
     expect(event.data?.[0]).toMatchObject(createUserRecord(1, 'Updated'));
+
+    table.delete.all();
+    table.insert.one(user);
+    let data, dataWithoutCount;
+    table.observe('update-one', d => data = d);
+    table.observe('update', d => dataWithoutCount = d);
+    const updatedUser: User = { ...user, name: 'Updated' };
+    table.update.one(updatedUser);
+    expect(data).toMatchObject(updatedUser);
+    expect(dataWithoutCount).toBeArray();
+    expect(dataWithoutCount?.[0]).toMatchObject(updatedUser);
   });
 
   it('should handle events for updateMany', async () => {
@@ -238,6 +253,23 @@ describe('Updater Events', () => {
     );
 
     expect(event.data?.[0]).toMatchObject(createUserRecord(1, 'Updated'));
+
+    table.delete.all();
+    const users = [user, { ...user, id: '2' }];
+    table.insert.many(users);
+    let data, dataWithoutCount;
+    table.observe('update-many', d => data = d);
+    table.observe('update', d => dataWithoutCount = d);
+
+    const updatedUsers = users
+      .map(user => ({ ...user, name: `Updated ${user.name}` }));
+
+    table.update.many(updatedUsers);
+    expect(data).toBeArray();
+    expect(data).toHaveLength(2);
+    expect(data?.[0]).toMatchObject(updatedUsers[0]);
+    expect(dataWithoutCount).toHaveLength(2);
+    expect(dataWithoutCount?.[0]).toMatchObject(updatedUsers[0]);
   });
 
   it('should handle events for updateAll', async () => {
@@ -261,5 +293,22 @@ describe('Updater Events', () => {
     );
 
     expect(event.data?.[0]).toMatchObject(createUserRecord(1, 'Updated'));
+
+    table.delete.all();
+    const users = [user, { ...user, id: '2' }];
+    table.insert.many(users);
+    let data, dataWithoutCount;
+    table.observe('update-all', d => data = d);
+    table.observe('update', d => dataWithoutCount = d);
+    table.update.all(user => ({ ...user, name: `Updated ${user.name}` }));
+    expect(data).toHaveLength(2);
+
+    expect(data?.[0])
+      .toMatchObject({ ...users[0], name: `Updated ${users[0].name}` });
+
+    expect(dataWithoutCount).toHaveLength(2);
+
+    expect(dataWithoutCount?.[0])
+      .toMatchObject({ ...users[0], name: `Updated ${users[0].name}` });
   });
 });

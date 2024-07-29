@@ -8,10 +8,9 @@ export const selectAll = <Rec extends DatabaseRecord>(
 ): SelectAll<Rec> => {
   const convert = convertArrayToRecord<Rec>(tableData.fields);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
+  const observers = tableData.eventObservers;
 
-  return () => {
-    const data = tableData.records.map(convert);
-
+  const notifyEventObservers = (records: Array<Rec>) => {
     notifyObservers(
       ['select', 'all'],
       {
@@ -19,9 +18,16 @@ export const selectAll = <Rec extends DatabaseRecord>(
         isSuccess: true,
         isEmpty: tableData.records.length === 0
       },
-      data
+      records
     );
 
+    observers['select-all']?.forEach(notify => notify(records));
+    observers['select']?.forEach(notify => notify(records));
+  };
+
+  return (emitEvent = true) => {
+    const data = tableData.records.map(convert);
+    if (emitEvent) notifyEventObservers(data);
     return { data, error: null };
   };
 };

@@ -5,7 +5,6 @@ import { DatabaseError } from '../error/error';
 import { Inserter } from './insert';
 import { insertAll } from './all';
 import {
-  addUserRecord,
   clearUserObservers,
   clearUserRecords,
   createUserEvent,
@@ -14,6 +13,7 @@ import {
   observeEvents,
   type User
 } from '../utils/tests';
+import { Table } from '../table/table';
 
 const user: User = { id: '1', name: 'Name' };
 
@@ -97,10 +97,11 @@ describe('Inserter', () => {
 
 describe('Inserter Events', () => {
   const tableData = createUserTableData();
-  const addRecord = addUserRecord(tableData);
   const clearRecords = clearUserRecords(tableData);
   const clearObservers = clearUserObservers(tableData);
   const observe = observeEvents(tableData);
+  const table = Table<User>('Users', ['id', 'name']);
+  const user = createUserRecord(1);
 
   it('should handle events for insertOne', async () => {
     clearRecords();
@@ -121,6 +122,18 @@ describe('Inserter Events', () => {
     );
 
     expect(event.data?.[0]).toMatchObject(createUserRecord(1));
+
+    table.delete.all();
+    let data, dataWithoutCount;
+    table.observe('insert-one', d => data = d);
+    table.observe('insert', d => dataWithoutCount = d);
+    table.insert.one({ ...user });
+    const records = table.select.all().data;
+    expect(records).toHaveLength(1);
+    expect(records?.[0]).toMatchObject(user);
+    expect(data).toMatchObject(user);
+    expect(dataWithoutCount).toHaveLength(1);
+    expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 
   it('should handle events for insertMany', async () => {
@@ -143,6 +156,20 @@ describe('Inserter Events', () => {
 
     expect(event.data).toHaveLength(2);
     expect(event.data?.[0]).toMatchObject(createUserRecord(1));
+
+    table.delete.all();
+    let data, dataWithoutCount;
+    table.observe('insert-many', d => data = d);
+    table.observe('insert', d => dataWithoutCount = d);
+    table.insert.many([{ ...user }, { ...user, id: '2' }]);
+    const records = table.select.all().data;
+    expect(records).toBeArray();
+    expect(records).toHaveLength(2);
+    expect(records?.[0]).toMatchObject(user);
+    expect(data).toHaveLength(2);
+    expect(data?.[0]).toMatchObject(user);
+    expect(dataWithoutCount).toHaveLength(2);
+    expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 
   it('should handle events for insertAll', async () => {
@@ -165,5 +192,18 @@ describe('Inserter Events', () => {
 
     expect(event.data).toHaveLength(2);
     expect(event.data?.[0]).toMatchObject(createUserRecord(1));
+
+    table.delete.all();
+    let data, dataWithoutCount;
+    table.observe('insert-all', d => data = d);
+    table.observe('insert', d => dataWithoutCount = d);
+    table.insert.all([{ ...user }, { ...user, id: '2' }]);
+    const records = table.select.all().data;
+    expect(records).toHaveLength(2);
+    expect(records?.[0]).toMatchObject(user);
+    expect(data).toHaveLength(2);
+    expect(data?.[0]).toMatchObject(user);
+    expect(dataWithoutCount).toHaveLength(2);
+    expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 });

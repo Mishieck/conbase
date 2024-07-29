@@ -1,8 +1,10 @@
+import type { DatabaseError } from '../error/error';
 import { databaseEventEmitter } from '../events/events';
 import type {
   TableData,
   DatabaseRecord,
-  DatabaseResult
+  DatabaseResult,
+  Nullable
 } from '../types/database';
 import type { UpdateMany } from '../types/update';
 import { updateOne } from './one';
@@ -12,32 +14,34 @@ export const updateMany = <Rec extends DatabaseRecord>(
 ): UpdateMany<Rec> => {
   const update = updateOne(tableData);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
+  const observers = tableData.eventObservers;
 
-  return updates => {
+  const notifyEventObservers =
+    (data: Array<Rec>, maybeError: Nullable<DatabaseError>) => {
+      notifyObservers(
+        ['update', 'many'],
+        {
+          isFetching: false,
+          isSuccess: !maybeError,
+          isEmpty: tableData.records.length === 0
+        },
+        data
+      );
+
+      observers['update-many']?.forEach(notify => notify(data));
+      observers['update']?.forEach(notify => notify(data));
+    };
+
+  return (updates, emitEvent = true) => {
     const results = updates.map<DatabaseResult<Rec>>(up => update(up, false));
-    const maybeError = results.find(({ error }) => !!error);
+    const maybeError = results.find(({ error }) => !!error)?.error ?? null;
 
     const data = maybeError
       ? null
       : results.filter(({ error }) => !error).map(({ data }) => data as Rec);
 
-    notifyObservers(
-      ['update', 'many'],
-      {
-        isFetching: false,
-        isSuccess: !maybeError,
-        isEmpty: tableData.records.length === 0
-      },
-      data
-    );
-
+    if (emitEvent) notifyEventObservers(data ?? [], maybeError);
     tableData.latestOperation = 'update';
-
-    return {
-      data,
-      error: maybeError
-        ? results.find(({ error }) => error)?.error ?? null
-        : null
-    };
+    return { data, error: maybeError };
   };
 };

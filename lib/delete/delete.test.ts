@@ -5,12 +5,15 @@ import { deleteAll } from './all';
 import { Remover } from './delete';
 
 import {
+  type User,
   addUserRecord,
   clearUserRecords,
   createUserEvent,
+  createUserRecord,
   createUserTableData,
   observeEvents
 } from '../utils/tests';
+import { Table } from '../table/table';
 
 describe('removeOne', () => {
   it('should delete one record', () => {
@@ -111,6 +114,8 @@ describe('Remover Events', () => {
   const observe = observeEvents(tableData);
   const addRecord = addUserRecord(tableData);
   const clearRecords = clearUserRecords(tableData);
+  const table = Table<User>('Users', ['id', 'name']);
+  const user = createUserRecord(1);
 
   it('should handle events for deleteOne', async () => {
     clearRecords();
@@ -127,6 +132,17 @@ describe('Remover Events', () => {
     );
 
     expect(event.data).toBeNull();
+
+    table.delete.all();
+    table.insert.one({ ...user });
+    let data, dataWithoutCount;
+    table.observe('delete-one', d => data = d);
+    table.observe('delete', d => dataWithoutCount = d);
+    table.delete.one(user.id);
+    expect(table.select.all().data).toBeEmpty();
+    expect(data).toMatchObject(user);
+    expect(dataWithoutCount).toBeArray();
+    expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 
   it('should handle events for deleteMany', async () => {
@@ -147,6 +163,19 @@ describe('Remover Events', () => {
     );
 
     expect(event.data).toBeNull();
+
+    table.delete.all();
+    table.insert.many([{ ...user }, { ...user, id: '2' }]);
+    let data, dataWithoutCount;
+    table.observe('delete-many', d => data = d);
+    table.observe('delete', d => dataWithoutCount = d);
+    table.delete.many([user.id, '2']);
+    expect(table.select.all().data).toBeEmpty();
+    expect(data).toBeArray();
+    expect(data).toHaveLength(2);
+    expect(data?.[0]).toMatchObject(user);
+    expect(dataWithoutCount).toHaveLength(2);
+    expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 
   it('should handle events for deleteAll', async () => {
@@ -165,5 +194,19 @@ describe('Remover Events', () => {
     );
 
     expect(event.data).toBeNull();
+
+    table.delete.all();
+    table.insert.all([{ ...user }, { ...user, id: '2' }]);
+    let data, dataWithoutCount;
+    table.observe('delete-all', d => data = d);
+    table.observe('delete', d => dataWithoutCount = d);
+    table.delete.all();
+    expect(table.select.all().data).toBeEmpty();
+    expect(data).toBeArray();
+    expect(data).toHaveLength(2);
+    expect(data?.[0]).toMatchObject(user);
+    expect(dataWithoutCount).toHaveLength(2);
+    expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 });
+

@@ -9,6 +9,22 @@ export const selectOne = <Rec extends DatabaseRecord>(
 ): SelectOne<Rec> => {
   const convert = convertArrayToRecord<Rec>(tableData.fields);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
+  const observers = tableData.eventObservers;
+
+  const notifyEventObservers = (record: Rec) => {
+    notifyObservers(
+      ['select', 'one'],
+      {
+        isFetching: false,
+        isSuccess: !!record,
+        isEmpty: tableData.records.length === 0
+      },
+      record ? [record] : null
+    );
+
+    observers['select-one']?.forEach(notify => notify(record));
+    observers['select']?.forEach(notify => notify([record]));
+  };
 
   return (id, emitEvent = true) => {
     let record = tableData.index
@@ -16,18 +32,7 @@ export const selectOne = <Rec extends DatabaseRecord>(
       : tableData.records.find(record => record[0] === id);
 
     const data = record ? convert(record) : null;
-
-    if (emitEvent) {
-      notifyObservers(
-        ['select', 'one'],
-        {
-          isFetching: false,
-          isSuccess: !!record,
-          isEmpty: tableData.records.length === 0
-        },
-        data ? [data] : null
-      );
-    }
+    if (emitEvent && data) notifyEventObservers(data);
 
     return {
       data,

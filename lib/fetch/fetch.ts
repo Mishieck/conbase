@@ -6,14 +6,8 @@ import type { OperationCount } from '../types/operations';
 const fetch =
   <Rec extends DatabaseRecord>(tableData: TableData<Rec>) =>
     (count: OperationCount): Fetch => {
-      const notifyObservers =
-        databaseEventEmitter.notifyObservers<Rec>(tableData);
-
-      return () => {
-
-        tableData.latestOperation = 'fetch';
-
-        notifyObservers(
+      const notifyObservers = () => {
+        databaseEventEmitter.notifyObservers<Rec>(tableData)(
           ['fetch', count],
           {
             isEmpty: !tableData.records.length,
@@ -22,6 +16,13 @@ const fetch =
           },
           null
         );
+
+        tableData.eventObservers['fetch']?.forEach(notify => notify);
+      };
+
+      return (emitEvent = true) => {
+        tableData.latestOperation = 'fetch';
+        if (emitEvent) notifyObservers();
       };
     };
 

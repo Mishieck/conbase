@@ -12,14 +12,9 @@ export const updateAll = <Rec extends DatabaseRecord>(
   const convertToRecord = convertArrayToRecord(tableData.fields);
   const convertToArray = convertRecordToArray(tableData.fields);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
+  const observers = tableData.eventObservers;
 
-  return update => {
-    tableData.records = tableData.records.map(record =>
-      convertToArray(update(convertToRecord(record)))
-    );
-
-    const data = tableData.records.map(convertToRecord);
-
+  const notifyEventObservers = (records: Array<Rec>) => {
     notifyObservers(
       ['update', 'all'],
       {
@@ -27,14 +22,21 @@ export const updateAll = <Rec extends DatabaseRecord>(
         isSuccess: true,
         isEmpty: tableData.records.length === 0
       },
-      data
+      records
     );
 
-    tableData.latestOperation = 'update';
+    observers['update-all']?.forEach(notify => notify(records));
+    observers['update']?.forEach(notify => notify(records));
+  };
 
-    return {
-      data,
-      error: null
-    };
+  return (update, emitEvent = true) => {
+    tableData.records = tableData
+      .records
+      .map(record => convertToArray(update(convertToRecord(record))));
+
+    const data = tableData.records.map(convertToRecord);
+    if (emitEvent) notifyEventObservers(data);
+    tableData.latestOperation = 'update';
+    return { data, error: null };
   };
 };

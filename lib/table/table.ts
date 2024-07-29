@@ -30,7 +30,8 @@ export const createTableData = <Rec extends DatabaseRecord>(
     fields: createFields(...fields),
     index: useIndex ? ({} as Index<Rec>) : null,
     records: [],
-    observers: []
+    observers: [],
+    eventObservers: {}
   };
 };
 
@@ -48,6 +49,22 @@ export const Table = <Rec extends DatabaseRecord>(
     delete: Remover(tableData),
     fetch: Fetcher(tableData),
     add: { observer: databaseEventEmitter.addObserver(tableData) },
+    observe: (eventName, observe) => {
+      if (!tableData.eventObservers[eventName])
+        tableData.eventObservers[eventName] = [];
+      tableData.eventObservers[eventName]?.push(observe);
+    },
+    remove: {
+      observer: (eventName, observe) => {
+        const indexOfObserver = tableData
+          .eventObservers[eventName]
+          ?.indexOf(observe);
+
+        if (typeof indexOfObserver === 'number' && indexOfObserver > -1)
+          tableData.eventObservers[eventName]?.splice(indexOfObserver, 1);
+      }
+    },
     get: { latestOperation: () => tableData.latestOperation }
   };
 };
+

@@ -28,7 +28,7 @@ const operationCountRecord = operationCounts.reduce(
   {} as OperationFlagCountRecord
 );
 
-const defaultOperationFlags = operationNames.reduce(
+export const defaultOperationFlags = operationNames.reduce(
   (flags, name) => ({ ...flags, [name]: operationCountRecord }),
   {} as OperationFlags
 );
@@ -68,7 +68,8 @@ export const IsOperation = (operationFlags: OperationFlags): IsOperationType =>
       [`is${name[0].toUpperCase()}${name.substring(
         1
       )}` as `is${OperationName}`]: () =>
-        Object.values(operationFlags[name]).some(value => value)
+          Object.values(operationFlags[name]).some(value => value)
     }),
     {} as IsOperationType
   );
+

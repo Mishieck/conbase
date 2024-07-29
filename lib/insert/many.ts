@@ -8,20 +8,29 @@ export const insertMany = <Rec extends DatabaseRecord>(
 ): InsertMany<Rec> => {
   const insert = insertOne(tableData);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
+  const observers = tableData.eventObservers;
 
-  return records => {
-    console.log('record length', records.length);
+  const notifyEventObservers = (data: Array<Rec>) => {
+    observers['insert-many']?.forEach(notify => notify(data));
+    observers['insert']?.forEach(notify => notify(data));
+  };
+
+  return (records, emitEvent = true) => {
     for (const record of records) insert(record, false);
 
-    notifyObservers(
-      ['insert', 'many'],
-      {
-        isFetching: false,
-        isSuccess: true,
-        isEmpty: tableData.records.length === 0
-      },
-      records
-    );
+    if (emitEvent) {
+      notifyObservers(
+        ['insert', 'many'],
+        {
+          isFetching: false,
+          isSuccess: true,
+          isEmpty: tableData.records.length === 0
+        },
+        records
+      );
+
+      notifyEventObservers(records);
+    }
 
     tableData.latestOperation = 'insert';
     return { data: null, error: null };

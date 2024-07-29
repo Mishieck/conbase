@@ -1,15 +1,17 @@
+import { defaultOperationFlags } from '../events/events';
 import type { Index, TableData } from '../types/database';
-import type { DatabaseEvent, EventStatusRecord } from '../types/events';
+import type {
+  DatabaseEvent,
+  EventStatusRecord,
+  OperationFlags
+} from '../types/events';
 import type { OperationCount, OperationName } from '../types/operations';
 
 export type User = { id: string; name: string };
 export type UserArray = [User['id'], User['name']];
 
-export type UserEvent<
-  Op extends OperationName,
-  Count extends OperationCount
-> = Pick<DatabaseEvent<User>, 'status'> & {
-  is: { [key in Op]: { [key in Count]: boolean } };
+export type UserEvent = Pick<DatabaseEvent<User>, 'status'> & {
+  is: OperationFlags
 };
 
 export const createUserTableData = (
@@ -19,7 +21,8 @@ export const createUserTableData = (
   fields: { id: 0, name: 1 },
   records: [],
   index,
-  observers: []
+  observers: [],
+  eventObservers: {}
 });
 
 export const createUserRecord = (id: number, name?: string): User => ({
@@ -34,8 +37,8 @@ export const createUserArray = (id: number, name?: string): UserArray => [
 
 export const addUserRecord =
   (tableData: TableData<User>) =>
-  (...inputs: [number] | [number, string]) =>
-    tableData.records.push(createUserArray(inputs[0], inputs[1]));
+    (...inputs: [number] | [number, string]) =>
+      tableData.records.push(createUserArray(inputs[0], inputs[1]));
 
 export const clearUserRecords = (tableData: TableData<User>) => () =>
   (tableData.records = []);
@@ -56,9 +59,14 @@ export const createUserEvent = <
 >(
   [op, count]: [Op, Count],
   status: Omit<EventStatusRecord, 'isError'>
-): UserEvent<Op, Count> => ({
-  //@ts-ignore: That's how the type is
-  is: { [op]: { [count]: true } },
+): UserEvent => ({
+  is: {
+    ...defaultOperationFlags,
+    [op]: {
+      ...defaultOperationFlags[op],
+      [count]: true
+    }
+  },
   status: {
     ...status,
     isError: !status.isSuccess

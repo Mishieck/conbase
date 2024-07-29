@@ -13,6 +13,7 @@ import {
   createUserTableData,
   observeEvents
 } from '../utils/tests';
+import { Table } from '../table/table';
 
 type User = { id: string; name: string };
 
@@ -28,7 +29,8 @@ const createTableData = (): TableData<User> => ({
   fields,
   index: null,
   records: [[...userArray]],
-  observers: []
+  observers: [],
+  eventObservers: {}
 });
 
 describe('selectOne', () => {
@@ -107,14 +109,14 @@ describe('Selector Events', () => {
   const observe = observeEvents(tableData);
   const clearRecords = clearUserRecords(tableData);
   const clearObservers = clearUserObservers(tableData);
+  const table = Table<User>('Users', ['id', 'name']);
+  const user = createUserRecord(1);
 
   it('should handle events for selectOne', async () => {
     clearRecords();
     clearObservers();
     tableData.records.push(createUserArray(1));
-
     const event = await observe(() => selectOne(tableData)('1'));
-
     expect(event).toBeDefined();
 
     expect(event).toMatchObject(
@@ -127,6 +129,16 @@ describe('Selector Events', () => {
 
     expect(event.data).toHaveLength(1);
     expect(event.data?.[0]).toMatchObject(createUserRecord(1));
+
+    table.delete.all();
+    table.insert.one({ ...user });
+    let data, dataWithoutCount;
+    table.observe('select-one', d => data = d);
+    table.observe('select', d => dataWithoutCount = d);
+    table.select.one(user.id);
+    expect(data).toMatchObject(user);
+    expect(dataWithoutCount).toBeArray();
+    expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 
   it('should handle events for selectMany', async () => {
@@ -152,6 +164,17 @@ describe('Selector Events', () => {
 
     expect(event.data).toHaveLength(2);
     expect(event.data?.[0]).toMatchObject(createUserRecord(1));
+
+    table.delete.all();
+    table.insert.many([{ ...user }, { ...user, id: '2' }]);
+    let data, dataWithoutCount;
+    table.observe('select-many', d => data = d);
+    table.observe('select', d => dataWithoutCount = d);
+    table.select.many([user.id, '2']);
+    expect(data).toHaveLength(2);
+    expect(data?.[0]).toMatchObject(user);
+    expect(dataWithoutCount).toBeArray();
+    expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 
   it('should handle events for selectAll', async () => {
@@ -159,7 +182,6 @@ describe('Selector Events', () => {
     clearObservers();
 
     tableData.records.push(createUserArray(1), createUserArray(2));
-
     const event = await observe(() => selectAll(tableData)());
 
     expect(event).toBeDefined();
@@ -174,5 +196,16 @@ describe('Selector Events', () => {
 
     expect(event.data).toHaveLength(2);
     expect(event.data?.[0]).toMatchObject(createUserRecord(1));
+
+    table.delete.all();
+    table.insert.many([{ ...user }, { ...user, id: '2' }]);
+    let data, dataWithoutCount;
+    table.observe('select-all', d => data = d);
+    table.observe('select', d => dataWithoutCount = d);
+    table.select.all();
+    expect(data).toHaveLength(2);
+    expect(data?.[0]).toMatchObject(user);
+    expect(dataWithoutCount).toBeArray();
+    expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 });
