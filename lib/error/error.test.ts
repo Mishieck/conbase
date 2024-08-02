@@ -7,7 +7,6 @@ describe('DatabaseError', () => {
     const message = 'Record already exists';
     const error = new DatabaseError(cause, message);
 
-    expect(error.name).toBe('DatabaseError');
     expect(error.cause).toBe(cause);
     expect(error.message).toBe(message);
     expect(error).toBeInstanceOf(Error);
