@@ -1,17 +1,17 @@
-import type { TableData, DatabaseRecord } from '../types/database';
-import type { Select } from '../types/select';
-import { selectAll } from './all';
-import { selectMany } from './many';
-import { selectOne } from './one';
+import type { DatabaseRecord, TableData } from "../types/database.ts";
+import type { Select } from "../types/select.ts";
+import { selectAll } from "./all.ts";
+import { selectMany } from "./many.ts";
+import { selectOne } from "./one.ts";
 
 export const Selector = <Rec extends DatabaseRecord>(
-  tableData: TableData<Rec>
+  tableData: TableData<Rec>,
 ): Select<Rec> => ({
   one: selectOne(tableData),
   many: selectMany(tableData),
-  all: selectAll(tableData)
+  all: selectAll(tableData),
 });
 
-export * from './all';
-export * from './one';
-export * from './many';
+export * from "./all.ts";
+export * from "./one.ts";
+export * from "./many.ts";

@@ -1,17 +1,17 @@
-import type { TableData, DatabaseRecord } from '../types/database';
-import type { Update } from '../types/update';
-import { updateAll } from './all';
-import { updateMany } from './many';
-import { updateOne } from './one';
+import type { DatabaseRecord, TableData } from "../types/database.ts";
+import type { Update } from "../types/update.ts";
+import { updateAll } from "./all.ts";
+import { updateMany } from "./many.ts";
+import { updateOne } from "./one.ts";
 
 export const Updater = <Rec extends DatabaseRecord>(
-  tableData: TableData<Rec>
+  tableData: TableData<Rec>,
 ): Update<Rec> => ({
   one: updateOne(tableData),
   many: updateMany(tableData),
-  all: updateAll(tableData)
+  all: updateAll(tableData),
 });
 
-export * from './all';
-export * from './one';
-export * from './many';
+export * from "./all.ts";
+export * from "./one.ts";
+export * from "./many.ts";

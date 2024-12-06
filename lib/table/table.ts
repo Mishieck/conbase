@@ -1,29 +1,29 @@
-import { Remover } from '../delete/delete';
-import { databaseEventEmitter } from '../events/events';
-import { Fetcher } from '../fetch/fetch';
-import { Inserter } from '../insert/insert';
-import { Selector } from '../select/select';
+import { Remover } from "../delete/delete.ts";
+import { databaseEventEmitter } from "../events/events.ts";
+import { Fetcher } from "../fetch/fetch.ts";
+import { Inserter } from "../insert/insert.ts";
+import { Selector } from "../select/select.ts";
 import type {
   DatabaseRecord,
   Fields,
   Index,
-  TableData
-} from '../types/database';
-import type { Table as TableType } from '../types/table';
-import { Updater } from '../update/update';
+  TableData,
+} from "../types/database.ts";
+import type { Table as TableType } from "../types/table.ts";
+import { Updater } from "../update/update.ts";
 
 export const createFields = <Rec extends DatabaseRecord>(
   ...fieldNames: Array<keyof Rec>
 ): Fields<Rec> =>
   fieldNames.reduce(
     (fields, key, i) => ({ ...fields, [key]: i }),
-    {} as Fields<Rec>
+    {} as Fields<Rec>,
   );
 
 export const createTableData = <Rec extends DatabaseRecord>(
   name: string,
   fields: Array<keyof Rec>,
-  useIndex: boolean
+  useIndex: boolean,
 ): TableData<Rec> => {
   return {
     name,
@@ -31,14 +31,14 @@ export const createTableData = <Rec extends DatabaseRecord>(
     index: useIndex ? ({} as Index<Rec>) : null,
     records: [],
     observers: [],
-    eventObservers: {}
+    eventObservers: {},
   };
 };
 
 export const Table = <Rec extends DatabaseRecord>(
   name: string,
   fields: Array<keyof Rec>,
-  useIndex: boolean = false
+  useIndex: boolean = false,
 ): TableType<Rec> => {
   const tableData = createTableData(name, fields, useIndex);
 
@@ -50,8 +50,9 @@ export const Table = <Rec extends DatabaseRecord>(
     fetch: Fetcher(tableData),
     add: { observer: databaseEventEmitter.addObserver(tableData) },
     observe: (eventName, observe) => {
-      if (!tableData.eventObservers[eventName])
+      if (!tableData.eventObservers[eventName]) {
         tableData.eventObservers[eventName] = [];
+      }
       tableData.eventObservers[eventName]?.push(observe);
     },
     remove: {
@@ -60,11 +61,11 @@ export const Table = <Rec extends DatabaseRecord>(
           .eventObservers[eventName]
           ?.indexOf(observe);
 
-        if (typeof indexOfObserver === 'number' && indexOfObserver > -1)
+        if (typeof indexOfObserver === "number" && indexOfObserver > -1) {
           tableData.eventObservers[eventName]?.splice(indexOfObserver, 1);
-      }
+        }
+      },
     },
-    get: { latestOperation: () => tableData.latestOperation }
+    get: { latestOperation: () => tableData.latestOperation },
   };
 };
-

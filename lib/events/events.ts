@@ -1,42 +1,42 @@
-import type { DatabaseRecord } from '../types/database';
+import type { DatabaseRecord } from "../types/database.ts";
 import type {
-  DatabaseEventEmitter,
   DatabaseEvent as Event,
+  DatabaseEventEmitter,
   EventStatusRecord,
   OperationFlagCountRecord,
-  OperationFlags
-} from '../types/events';
+  OperationFlags,
+} from "../types/events.ts";
 import type {
   IsOperation as IsOperationType,
   Operation,
   OperationCount,
-  OperationName
-} from '../types/operations';
+  OperationName,
+} from "../types/operations.ts";
 
 export const operationNames: Array<OperationName> = [
-  'delete',
-  'insert',
-  'select',
-  'update',
-  'fetch'
+  "delete",
+  "insert",
+  "select",
+  "update",
+  "fetch",
 ];
 
-export const operationCounts: Array<OperationCount> = ['all', 'many', 'one'];
+export const operationCounts: Array<OperationCount> = ["all", "many", "one"];
 
-const operationCountRecord = operationCounts.reduce(
+const operationCountRecord: OperationFlagCountRecord = operationCounts.reduce(
   (flags, count) => ({ ...flags, [count]: false }),
-  {} as OperationFlagCountRecord
+  {} as OperationFlagCountRecord,
 );
 
-export const defaultOperationFlags = operationNames.reduce(
+export const defaultOperationFlags: OperationFlags = operationNames.reduce(
   (flags, name) => ({ ...flags, [name]: operationCountRecord }),
-  {} as OperationFlags
+  {} as OperationFlags,
 );
 
 export const DatabaseEvent = <Rec extends DatabaseRecord>(
   operation: Operation,
-  status: Omit<EventStatusRecord, 'isError'>,
-  data: Event<Rec>['data']
+  status: Omit<EventStatusRecord, "isError">,
+  data: Event<Rec>["data"],
 ): Event<Rec> => {
   const operationFlags: OperationFlags = { ...defaultOperationFlags };
   const [name, count] = operation;
@@ -47,29 +47,31 @@ export const DatabaseEvent = <Rec extends DatabaseRecord>(
   return {
     is: operationFlags,
     status: { ...status, isError: !status.isSuccess },
-    data
+    data,
   };
 };
 
 export const databaseEventEmitter: DatabaseEventEmitter = {
-  addObserver: tableData => observe => {
+  addObserver: (tableData) => (observe) => {
     tableData.observers.push(observe);
   },
-  notifyObservers: tableData => (operation, status, data) => {
+  notifyObservers: (tableData) => (operation, status, data) => {
     const event = DatabaseEvent(operation, status, data);
     for (const observe of tableData.observers) observe(event);
-  }
+  },
 };
 
 export const IsOperation = (operationFlags: OperationFlags): IsOperationType =>
   operationNames.reduce(
     (isOperation, name) => ({
       ...isOperation,
-      [`is${name[0].toUpperCase()}${name.substring(
-        1
-      )}` as `is${OperationName}`]: () =>
-          Object.values(operationFlags[name]).some(value => value)
+      [
+        `is${name[0].toUpperCase()}${
+          name.substring(
+            1,
+          )
+        }` as `is${OperationName}`
+      ]: () => Object.values(operationFlags[name]).some((value) => value),
     }),
-    {} as IsOperationType
+    {} as IsOperationType,
   );
-

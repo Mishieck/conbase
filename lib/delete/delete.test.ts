@@ -1,81 +1,82 @@
-import { describe, it, expect } from 'bun:test';
-import { deleteOne } from './one';
-import { deleteMany } from './many';
-import { deleteAll } from './all';
-import { Remover } from './delete';
+import { describe, it } from "@std/testing";
+import { expect } from "@std/expect";
+import { deleteOne } from "./one.ts";
+import { deleteMany } from "./many.ts";
+import { deleteAll } from "./all.ts";
+import { Remover } from "./delete.ts";
 
 import {
-  type User,
   addUserRecord,
   clearUserRecords,
   createUserEvent,
   createUserRecord,
   createUserTableData,
-  observeEvents
-} from '../utils/tests';
-import { Table } from '../table/table';
+  observeEvents,
+  type User,
+} from "../utils/tests.ts";
+import { Table } from "../table/table.ts";
 
-describe('removeOne', () => {
-  it('should delete one record', () => {
+describe("removeOne", () => {
+  it("should delete one record", () => {
     const tableData = createUserTableData();
-    const id = '1';
-    tableData.records.push([id, 'Remover']);
+    const id = "1";
+    tableData.records.push([id, "Remover"]);
     expect(tableData.records).toHaveLength(1);
-    deleteOne(tableData)('1');
+    deleteOne(tableData)("1");
     expect(tableData.records).toHaveLength(0);
   });
 
-  it('should error if record does not exist', () => {
+  it("should error if record does not exist", () => {
     const tableData = createUserTableData();
-    const id = '1';
-    tableData.records.push([id, 'Remover']);
+    const id = "1";
+    tableData.records.push([id, "Remover"]);
     expect(tableData.records).toHaveLength(1);
-    const { error } = deleteOne(tableData)('2');
+    const { error } = deleteOne(tableData)("2");
     expect(error).toBeDefined();
     expect(tableData.records).toHaveLength(1);
   });
 });
 
-describe('deleteMany', () => {
-  it('should delete many records', () => {
+describe("deleteMany", () => {
+  it("should delete many records", () => {
     const tableData = createUserTableData();
 
     tableData.records.push(
-      ['1', 'Remover 1'],
-      ['2', 'Remover 2'],
-      ['3', 'Remover 3']
+      ["1", "Remover 1"],
+      ["2", "Remover 2"],
+      ["3", "Remover 3"],
     );
 
     expect(tableData.records).toHaveLength(3);
-    deleteMany(tableData)(['1', '2']);
+    deleteMany(tableData)(["1", "2"]);
     expect(tableData.records).toHaveLength(1);
-    expect(tableData.records[0]?.[0]).toEqual('3');
+    expect(tableData.records[0]?.[0]).toEqual("3");
   });
 
-  it('should error if any of the records does not exist', () => {
+  it("should error if any of the records does not exist", () => {
     const tableData = createUserTableData();
 
     tableData.records.push(
-      ['1', 'Remover 1'],
-      ['2', 'Remover 2'],
-      ['3', 'Remover 3']
+      ["1", "Remover 1"],
+      ["2", "Remover 2"],
+      ["3", "Remover 3"],
     );
 
-    const { error } = deleteMany(tableData)(['1', '4']);
+    const { error } = deleteMany(tableData)(["1", "4"]);
     expect(error).toBeDefined();
-    expect(error).toMatchObject({ cause: 'NOT-EXISTS' });
+    expect(error).toMatchObject({ cause: "NOT-EXISTS" });
     expect(tableData.records).toHaveLength(2);
   });
 });
 
-describe('deleteAll', () => {
-  it('should delete all records', () => {
+describe("deleteAll", () => {
+  it("should delete all records", () => {
     const tableData = createUserTableData();
 
     tableData.records.push(
-      ['1', 'Remover 1'],
-      ['2', 'Remover 2'],
-      ['3', 'Remover 3']
+      ["1", "Remover 1"],
+      ["2", "Remover 2"],
+      ["3", "Remover 3"],
     );
 
     expect(tableData.records).toHaveLength(3);
@@ -84,51 +85,51 @@ describe('deleteAll', () => {
   });
 });
 
-describe('Remover', () => {
-  it('should remove items from tableData using various methods', () => {
+describe("Remover", () => {
+  it("should remove items from tableData using various methods", () => {
     const tableData = createUserTableData();
     const remove = Remover(tableData);
 
     tableData.records.push(
-      ['1', 'Remover 1'],
-      ['2', 'Remover 2'],
-      ['3', 'Remover 3']
+      ["1", "Remover 1"],
+      ["2", "Remover 2"],
+      ["3", "Remover 3"],
     );
 
-    remove.one('1');
+    remove.one("1");
     expect(tableData.records).toHaveLength(2);
 
     remove.all();
     expect(tableData.records).toHaveLength(0);
 
-    tableData.records.push(['1', 'Remover 1'], ['2', 'Remover 2']);
+    tableData.records.push(["1", "Remover 1"], ["2", "Remover 2"]);
     expect(tableData.records).toHaveLength(2);
 
-    remove.many(['1', '2']);
+    remove.many(["1", "2"]);
     expect(tableData.records).toHaveLength(0);
   });
 });
 
-describe('Remover Events', () => {
+describe("Remover Events", () => {
   const tableData = createUserTableData();
   const observe = observeEvents(tableData);
   const addRecord = addUserRecord(tableData);
   const clearRecords = clearUserRecords(tableData);
-  const table = Table<User>('Users', ['id', 'name']);
+  const table = Table<User>("Users", ["id", "name"]);
   const user = createUserRecord(1);
 
-  it('should handle events for deleteOne', async () => {
+  it("should handle events for deleteOne", async () => {
     clearRecords();
     addRecord(1);
-    const event = await observe(() => deleteOne(tableData)('1'));
+    const event = await observe(() => deleteOne(tableData)("1"));
     expect(event).toBeDefined();
 
     expect(event).toMatchObject(
-      createUserEvent(['delete', 'one'], {
+      createUserEvent(["delete", "one"], {
         isSuccess: true,
         isEmpty: true,
-        isFetching: false
-      })
+        isFetching: false,
+      }),
     );
 
     expect(event.data).toBeNull();
@@ -136,49 +137,49 @@ describe('Remover Events', () => {
     table.delete.all();
     table.insert.one({ ...user });
     let data, dataWithoutCount;
-    table.observe('delete-one', d => data = d);
-    table.observe('delete', d => dataWithoutCount = d);
+    table.observe("delete-one", (d) => data = d);
+    table.observe("delete", (d) => dataWithoutCount = d);
     table.delete.one(user.id);
-    expect(table.select.all().data).toBeEmpty();
+    expect(table.select.all().data).toHaveLength(0);
     expect(data).toMatchObject(user);
-    expect(dataWithoutCount).toBeArray();
+    expect(dataWithoutCount).toBeInstanceOf(Array);
     expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 
-  it('should handle events for deleteMany', async () => {
+  it("should handle events for deleteMany", async () => {
     clearRecords();
     addRecord(1);
     addRecord(2);
     addRecord(3);
 
-    const event = await observe(() => deleteMany(tableData)(['1', '2']));
+    const event = await observe(() => deleteMany(tableData)(["1", "2"]));
     expect(event).toBeDefined();
 
     expect(event).toMatchObject(
-      createUserEvent(['delete', 'many'], {
+      createUserEvent(["delete", "many"], {
         isSuccess: true,
         isEmpty: false,
-        isFetching: false
-      })
+        isFetching: false,
+      }),
     );
 
     expect(event.data).toBeNull();
 
     table.delete.all();
-    table.insert.many([{ ...user }, { ...user, id: '2' }]);
+    table.insert.many([{ ...user }, { ...user, id: "2" }]);
     let data, dataWithoutCount;
-    table.observe('delete-many', d => data = d);
-    table.observe('delete', d => dataWithoutCount = d);
-    table.delete.many([user.id, '2']);
-    expect(table.select.all().data).toBeEmpty();
-    expect(data).toBeArray();
+    table.observe("delete-many", (d) => data = d);
+    table.observe("delete", (d) => dataWithoutCount = d);
+    table.delete.many([user.id, "2"]);
+    expect(table.select.all().data).toHaveLength(0);
+    expect(data).toBeInstanceOf(Array);
     expect(data).toHaveLength(2);
     expect(data?.[0]).toMatchObject(user);
     expect(dataWithoutCount).toHaveLength(2);
     expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 
-  it('should handle events for deleteAll', async () => {
+  it("should handle events for deleteAll", async () => {
     clearRecords();
     addRecord(1);
     addRecord(2);
@@ -186,27 +187,26 @@ describe('Remover Events', () => {
     expect(event).toBeDefined();
 
     expect(event).toMatchObject(
-      createUserEvent(['delete', 'all'], {
+      createUserEvent(["delete", "all"], {
         isSuccess: true,
         isEmpty: true,
-        isFetching: false
-      })
+        isFetching: false,
+      }),
     );
 
     expect(event.data).toBeNull();
 
     table.delete.all();
-    table.insert.all([{ ...user }, { ...user, id: '2' }]);
+    table.insert.all([{ ...user }, { ...user, id: "2" }]);
     let data, dataWithoutCount;
-    table.observe('delete-all', d => data = d);
-    table.observe('delete', d => dataWithoutCount = d);
+    table.observe("delete-all", (d) => data = d);
+    table.observe("delete", (d) => dataWithoutCount = d);
     table.delete.all();
-    expect(table.select.all().data).toBeEmpty();
-    expect(data).toBeArray();
+    expect(table.select.all().data).toHaveLength(0);
+    expect(data).toBeInstanceOf(Array);
     expect(data).toHaveLength(2);
     expect(data?.[0]).toMatchObject(user);
     expect(dataWithoutCount).toHaveLength(2);
     expect(dataWithoutCount?.[0]).toMatchObject(user);
   });
 });
-

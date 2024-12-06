@@ -1,18 +1,18 @@
-import { databaseEventEmitter } from '../events/events';
-import type { TableData, DatabaseRecord } from '../types/database';
-import type { InsertMany } from '../types/insert';
-import { insertOne } from './one';
+import { databaseEventEmitter } from "../events/events.ts";
+import type { DatabaseRecord, TableData } from "../types/database.ts";
+import type { InsertMany } from "../types/insert.ts";
+import { insertOne } from "./one.ts";
 
 export const insertMany = <Rec extends DatabaseRecord>(
-  tableData: TableData<Rec>
+  tableData: TableData<Rec>,
 ): InsertMany<Rec> => {
   const insert = insertOne(tableData);
   const notifyObservers = databaseEventEmitter.notifyObservers<Rec>(tableData);
   const observers = tableData.eventObservers;
 
   const notifyEventObservers = (data: Array<Rec>) => {
-    observers['insert-many']?.forEach(notify => notify(data));
-    observers['insert']?.forEach(notify => notify(data));
+    observers["insert-many"]?.forEach((notify) => notify(data));
+    observers["insert"]?.forEach((notify) => notify(data));
   };
 
   return (records, emitEvent = true) => {
@@ -20,19 +20,19 @@ export const insertMany = <Rec extends DatabaseRecord>(
 
     if (emitEvent) {
       notifyObservers(
-        ['insert', 'many'],
+        ["insert", "many"],
         {
           isFetching: false,
           isSuccess: true,
-          isEmpty: tableData.records.length === 0
+          isEmpty: tableData.records.length === 0,
         },
-        records
+        records,
       );
 
       notifyEventObservers(records);
     }
 
-    tableData.latestOperation = 'insert';
+    tableData.latestOperation = "insert";
     return { data: null, error: null };
   };
 };
