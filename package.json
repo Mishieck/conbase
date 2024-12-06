@@ -7,7 +7,6 @@
   "types": "dist/index.d.ts",
   "description": "",
   "scripts": {
-    "build": "bun run build.mjs",
     "prepublishOnly": "bun run build"
   },
   "files": [
