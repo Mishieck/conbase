@@ -4,7 +4,8 @@
   "exports": "./mod.ts",
   "tasks": {
     "dev": "deno run --watch main.ts",
-    "insert-examples": "deno run --allow-read --allow-write insert-examples.ts"
+    "insert-examples": "deno run --allow-read --allow-write scripts/insert-example-docs.ts",
+    "create-docs": "deno run --allow-read --allow-write scripts/create-docs.ts"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.8",
